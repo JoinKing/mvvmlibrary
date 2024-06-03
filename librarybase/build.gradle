@@ -93,4 +93,8 @@ dependencies {
     //socket
     api 'org.java-websocket:Java-WebSocket:1.5.1'
 
+    annotationProcessor rootProject.ext.dependencies["room-compiler"]
+    api rootProject.ext.dependencies["room-runtime"]
+    api rootProject.ext.dependencies["room-rxjava2"]
+
 }
