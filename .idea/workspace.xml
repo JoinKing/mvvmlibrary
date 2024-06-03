@@ -489,13 +489,11 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1998b7de-f4d5-441b-86a4-c4cb131750f0" name="Default Changelist" comment="recorderlib.aar">
-      <change afterPath="$PROJECT_DIR$/librarybase/libs/isoparser-1.0.6.jar" afterDir="false" />
+    <list default="true" id="1998b7de-f4d5-441b-86a4-c4cb131750f0" name="Default Changelist" comment="map">
       <change beforePath="$PROJECT_DIR$/.gradle/7.2/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.2/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.2/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.2/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/config.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/librarybase/libs/recorderlib.aar" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -973,22 +971,6 @@
       <option name="project" value="LOCAL" />
       <updated>1716472846214</updated>
     </task>
-    <task id="LOCAL-00092" summary="recorderlib.aar">
-      <option name="closed" value="true" />
-      <created>1717404610344</created>
-      <option name="number" value="00092" />
-      <option name="presentableId" value="LOCAL-00092" />
-      <option name="project" value="LOCAL" />
-      <updated>1717404610344</updated>
-    </task>
-    <task id="LOCAL-00093" summary="recorderlib.aar">
-      <option name="closed" value="true" />
-      <created>1717404669876</created>
-      <option name="number" value="00093" />
-      <option name="presentableId" value="LOCAL-00093" />
-      <option name="project" value="LOCAL" />
-      <updated>1717404669876</updated>
-    </task>
     <task id="LOCAL-00094" summary="recorderlib.aar">
       <option name="closed" value="true" />
       <created>1717405023403</created>
@@ -997,7 +979,23 @@
       <option name="project" value="LOCAL" />
       <updated>1717405023403</updated>
     </task>
-    <option name="localTasksCounter" value="95" />
+    <task id="LOCAL-00095" summary="recorderlib.aar">
+      <option name="closed" value="true" />
+      <created>1717405403375</created>
+      <option name="number" value="00095" />
+      <option name="presentableId" value="LOCAL-00095" />
+      <option name="project" value="LOCAL" />
+      <updated>1717405403375</updated>
+    </task>
+    <task id="LOCAL-00096" summary="map">
+      <option name="closed" value="true" />
+      <created>1717405836780</created>
+      <option name="number" value="00096" />
+      <option name="presentableId" value="LOCAL-00096" />
+      <option name="project" value="LOCAL" />
+      <updated>1717405836780</updated>
+    </task>
+    <option name="localTasksCounter" value="97" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -1062,8 +1060,8 @@
     <MESSAGE value="/material/apply/queryApplyMaterialDrug 移除type" />
     <MESSAGE value="first" />
     <MESSAGE value="room" />
-    <MESSAGE value="map" />
     <MESSAGE value="recorderlib.aar" />
-    <option name="LAST_COMMIT_MESSAGE" value="recorderlib.aar" />
+    <MESSAGE value="map" />
+    <option name="LAST_COMMIT_MESSAGE" value="map" />
   </component>
 </project>
