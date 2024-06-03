@@ -490,9 +490,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1998b7de-f4d5-441b-86a4-c4cb131750f0" name="Default Changelist" comment="first">
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/librarybase/maven.gradle" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pay.jks" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/librarybase/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/librarybase/build.gradle" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -563,19 +561,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;PROJECT_TRUSTED_KEY&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/huangwenqiang/Desktop/mvvm/librarybase&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "PROJECT_TRUSTED_KEY": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/Users/huangwenqiang/Desktop/mvvm/mvvmlibrary",
+    "settings.editor.selected.configurable": "preferences.keymap"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/app/libs" />
@@ -970,14 +968,6 @@
       <option name="project" value="LOCAL" />
       <updated>1716472846214</updated>
     </task>
-    <task id="LOCAL-00083" summary="需求变更，移除弹窗确认">
-      <option name="closed" value="true" />
-      <created>1717396933835</created>
-      <option name="number" value="00083" />
-      <option name="presentableId" value="LOCAL-00083" />
-      <option name="project" value="LOCAL" />
-      <updated>1717396933835</updated>
-    </task>
     <task id="LOCAL-00084" summary="/material/apply/queryApplyMaterialDrug 移除type">
       <option name="closed" value="true" />
       <created>1717400033495</created>
@@ -994,7 +984,15 @@
       <option name="project" value="LOCAL" />
       <updated>1717401233267</updated>
     </task>
-    <option name="localTasksCounter" value="86" />
+    <task id="LOCAL-00086" summary="first">
+      <option name="closed" value="true" />
+      <created>1717402219295</created>
+      <option name="number" value="00086" />
+      <option name="presentableId" value="LOCAL-00086" />
+      <option name="project" value="LOCAL" />
+      <updated>1717402219295</updated>
+    </task>
+    <option name="localTasksCounter" value="87" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
