@@ -489,9 +489,7 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1998b7de-f4d5-441b-86a4-c4cb131750f0" name="Default Changelist" comment="room">
-      <change beforePath="$PROJECT_DIR$/librarybase/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/librarybase/build.gradle" afterDir="false" />
-    </list>
+    <list default="true" id="1998b7de-f4d5-441b-86a4-c4cb131750f0" name="Default Changelist" comment="map" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -570,7 +568,7 @@
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "/Users/huangwenqiang/Desktop/mvvm/mvvmlibrary",
+    "last_opened_file_path": "/Users/huangwenqiang/Desktop/mvvm/mvvmlibrary/librarybase/libs",
     "settings.editor.selected.configurable": "preferences.keymap"
   }
 }]]></component>
@@ -968,14 +966,6 @@
       <option name="project" value="LOCAL" />
       <updated>1716472846214</updated>
     </task>
-    <task id="LOCAL-00086" summary="first">
-      <option name="closed" value="true" />
-      <created>1717402219295</created>
-      <option name="number" value="00086" />
-      <option name="presentableId" value="LOCAL-00086" />
-      <option name="project" value="LOCAL" />
-      <updated>1717402219295</updated>
-    </task>
     <task id="LOCAL-00087" summary="room">
       <option name="closed" value="true" />
       <created>1717402955001</created>
@@ -992,7 +982,15 @@
       <option name="project" value="LOCAL" />
       <updated>1717403001988</updated>
     </task>
-    <option name="localTasksCounter" value="89" />
+    <task id="LOCAL-00089" summary="map">
+      <option name="closed" value="true" />
+      <created>1717403727221</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1717403727221</updated>
+    </task>
+    <option name="localTasksCounter" value="90" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -1034,7 +1032,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="消息-会话消息，未读，历史" />
     <MESSAGE value="优化事件列表队员数据" />
     <MESSAGE value="现场物资首页部分ui" />
     <MESSAGE value="音量最大化" />
@@ -1059,6 +1056,7 @@
     <MESSAGE value="/material/apply/queryApplyMaterialDrug 移除type" />
     <MESSAGE value="first" />
     <MESSAGE value="room" />
-    <option name="LAST_COMMIT_MESSAGE" value="room" />
+    <MESSAGE value="map" />
+    <option name="LAST_COMMIT_MESSAGE" value="map" />
   </component>
 </project>
