@@ -32,7 +32,7 @@ android {
 
 
 dependencies {
-    api fileTree(include: ['*.jar'], dir: 'libs')
+    api fileTree(include: ['*.jar','*.aar'], dir: 'libs')
     api rootProject.ext.dependencies["constraint-layout"]
 
     api "androidx.recyclerview:recyclerview:1.0.0"

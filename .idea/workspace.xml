@@ -489,7 +489,11 @@
     </select>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1998b7de-f4d5-441b-86a4-c4cb131750f0" name="Default Changelist" comment="map" />
+    <list default="true" id="1998b7de-f4d5-441b-86a4-c4cb131750f0" name="Default Changelist" comment="map">
+      <change afterPath="$PROJECT_DIR$/librarybase/libs/recorderlib.aar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/librarybase/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/librarybase/build.gradle" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -574,11 +578,11 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/librarybase/libs" />
       <recent name="$PROJECT_DIR$/app/libs" />
       <recent name="$PROJECT_DIR$/app/src/main/res/drawable" />
       <recent name="$PROJECT_DIR$/app/src/main/java/com/lib/emergency/rescue/utils/videocompressor" />
       <recent name="$PROJECT_DIR$/app/src/main/java/com/lib/emergency/rescue/utils" />
-      <recent name="$PROJECT_DIR$/app/src/main/res/layout" />
     </key>
     <key name="android.template.1827772592">
       <recent name="com.lib.emergency.rescue.ui.work.ui.fragment.patientRegistration" />
@@ -966,22 +970,6 @@
       <option name="project" value="LOCAL" />
       <updated>1716472846214</updated>
     </task>
-    <task id="LOCAL-00087" summary="room">
-      <option name="closed" value="true" />
-      <created>1717402955001</created>
-      <option name="number" value="00087" />
-      <option name="presentableId" value="LOCAL-00087" />
-      <option name="project" value="LOCAL" />
-      <updated>1717402955001</updated>
-    </task>
-    <task id="LOCAL-00088" summary="room">
-      <option name="closed" value="true" />
-      <created>1717403001988</created>
-      <option name="number" value="00088" />
-      <option name="presentableId" value="LOCAL-00088" />
-      <option name="project" value="LOCAL" />
-      <updated>1717403001988</updated>
-    </task>
     <task id="LOCAL-00089" summary="map">
       <option name="closed" value="true" />
       <created>1717403727221</created>
@@ -990,7 +978,23 @@
       <option name="project" value="LOCAL" />
       <updated>1717403727221</updated>
     </task>
-    <option name="localTasksCounter" value="90" />
+    <task id="LOCAL-00090" summary="map">
+      <option name="closed" value="true" />
+      <created>1717403987061</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1717403987061</updated>
+    </task>
+    <task id="LOCAL-00091" summary="map">
+      <option name="closed" value="true" />
+      <created>1717404270280</created>
+      <option name="number" value="00091" />
+      <option name="presentableId" value="LOCAL-00091" />
+      <option name="project" value="LOCAL" />
+      <updated>1717404270280</updated>
+    </task>
+    <option name="localTasksCounter" value="92" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
