@@ -89,7 +89,7 @@ dependencies {
     api 'com.github.wildma:PictureSelector:2.1.0'
     // 动画解析库：https://github.com/airbnb/lottie-android
     // 动画资源：https://lottiefiles.com、https://icons8.com/animated-icons
-    implementation 'com.airbnb.android:lottie:4.1.0'
+    api 'com.airbnb.android:lottie:4.1.0'
     //socket
     api 'org.java-websocket:Java-WebSocket:1.5.1'
 
