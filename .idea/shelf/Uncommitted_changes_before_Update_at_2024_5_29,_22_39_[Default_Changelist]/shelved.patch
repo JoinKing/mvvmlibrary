@@ -1,0 +1,1108 @@
+Index: app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/vm/ApplyMaterialsMostViewModel.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.lib.emergency.rescue.ui.work.ui.activity.materials_manager.vm;\n\nimport android.app.Activity;\nimport android.app.Application;\n\nimport androidx.annotation.NonNull;\nimport androidx.databinding.ObservableArrayList;\nimport androidx.databinding.ObservableBoolean;\nimport androidx.databinding.ObservableField;\nimport androidx.databinding.ObservableList;\n\nimport com.hwq.mvvmlibrary.base.BaseViewModel;\nimport com.hwq.mvvmlibrary.binding.adapter.ItemBinding;\nimport com.hwq.mvvmlibrary.binding.command.BindingCommand;\nimport com.hwq.mvvmlibrary.http.BaseResponse;\nimport com.hwq.mvvmlibrary.http.ResponseThrowable;\nimport com.hwq.mvvmlibrary.utils.KLog;\nimport com.hwq.mvvmlibrary.utils.RxUtils;\nimport com.hwq.mvvmlibrary.utils.ToastUtils;\nimport com.lib.emergency.rescue.App;\nimport com.lib.emergency.rescue.BR;\nimport com.lib.emergency.rescue.R;\nimport com.lib.emergency.rescue.data.Repository;\nimport com.lib.emergency.rescue.data.http.BaseResult;\nimport com.lib.emergency.rescue.data.http.result.CatalogQueryResult;\nimport com.lib.emergency.rescue.data.http.result.QueryApplyMaterialDrugResult;\nimport com.lib.emergency.rescue.data.http.result.QueryMaterialApplyMaterialDrugResult;\nimport com.lib.emergency.rescue.ui.work.ui.viewModel.MaterialAddItemViewModel;\nimport com.lib.emergency.rescue.view.dialog.BaseDialog;\nimport com.lib.emergency.rescue.view.dialog.MessageDialog;\nimport com.lib.emergency.rescue.view.dialog.WheelViewDialog;\n\nimport java.util.ArrayList;\nimport java.util.HashMap;\nimport java.util.List;\nimport java.util.Map;\nimport java.util.function.Consumer;\n\npublic class ApplyMaterialsMostViewModel extends BaseViewModel<Repository> {\n\n    public ApplyMaterialsMostViewModel(@NonNull Application application, Repository model) {\n        super(application, model);\n    }\n\n    @Override\n    public void onCreate() {\n        super.onCreate();\n        titleViewModel.titleText.set(\"批量选择\");\n    }\n\n    public ObservableField<String> checkSpecification = new ObservableField<>(\"0\");\n\n    public ObservableField<String> checkCount = new ObservableField<>(\"0\");\n\n    public List<QueryMaterialApplyMaterialDrugResult> checkList = new ArrayList<>();\n\n    int specificationCount = 0;\n    int count = 0;\n    public ObservableField<String> left = new ObservableField<>(\"物资\");\n    public ObservableField<String> leftId = new ObservableField<>(\"0\");\n    public ObservableField<String> rightId = new ObservableField<>();\n\n    public ObservableField<String> right = new ObservableField<>();\n\n    public ObservableField<String> name = new ObservableField<>();\n    public ObservableField<String> specification = new ObservableField<>();\n\n    //给RecyclerView添加items\n    public ObservableList<ApplyMaterialsMostItemViewModel> observableList = new ObservableArrayList<>();\n    //给RecyclerView添加ItemBinding\n    public ItemBinding<ApplyMaterialsMostItemViewModel> itemBinding = ItemBinding.of(BR.item, R.layout.fragment_apply_materials_most_item);\n\n\n    public BindingCommand click(int id) {\n        return new BindingCommand(() -> {\n            if (id == 1) {\n                showRight();\n            } else if (id == 0) {\n                //判断清空数据\n                new MessageDialog.Builder(App.getTopActivityInstance())\n                        // 标题可以不用填写\n                        .setTitle(\"提示\")\n                        // 内容必须要填写\n                        .setMessage(\"当前已选择物资/药品\\n\" + \"若添加其他物资类型将移除已选择的物资/药品\")\n                        // 确定按钮文本\n                        .setConfirm(\"确定\")\n                        // 设置 null 表示不显示取消按钮\n                        .setCancel(\"返回\")\n                        // 设置点击按钮后不关闭对话框\n                        //.setAutoDismiss(false)\n                        .setListener(new MessageDialog.OnListener() {\n                            @Override\n                            public void onConfirm(BaseDialog dialog) {\n                                showLeft();\n                            }\n\n                            @Override\n                            public void onCancel(BaseDialog dialog) {\n\n                            }\n                        }).show();\n\n            } else if (id == 3) {\n                search();\n            }else if (id==4){\n                //save\n                save.set(!save.get());\n            }\n        });\n    }\n\n    public ObservableBoolean save = new ObservableBoolean(false);\n\n\n\n    private void search() {\n        Map<String, Object> body = new HashMap<>();\n        body.put(\"type\", leftId.get());\n        body.put(\"catalog\", rightId.get());\n        body.put(\"manufacturer\", \"\");\n        body.put(\"name\", name.get());\n        body.put(\"specification\", specification.get());\n        body.put(\"type\", leftId.get());\n        observableList.clear();\n        checkSpecification.set(0 + \"\");\n        model.queryMaterialApplyMaterialDrug(body).compose(RxUtils.schedulersTransformer()) //线程调度\n                .compose(RxUtils.exceptionTransformer()).doOnSubscribe(this).subscribe(new BaseResult<BaseResponse<List<QueryMaterialApplyMaterialDrugResult>>>() {\n                    @Override\n                    public void onError(ResponseThrowable e) {\n                        KLog.e(e.getMessage());\n                    }\n\n                    @Override\n                    public void onSuccess(BaseResponse<List<QueryMaterialApplyMaterialDrugResult>> result) {\n                        result.data.forEach(queryMaterialApplyMaterialDrugResult -> observableList.add(new ApplyMaterialsMostItemViewModel(ApplyMaterialsMostViewModel.this, queryMaterialApplyMaterialDrugResult)));\n                    }\n\n                    @Override\n                    public void onComplete() {\n                        dismissDialog();\n                    }\n                });\n    }\n\n    public void catalogQuery() {\n        Map<String, Object> body = new HashMap<>();\n        body.put(\"type\", leftId.get());\n        model.catalogQuery(body).compose(RxUtils.schedulersTransformer()) //线程调度\n                .compose(RxUtils.exceptionTransformer()).doOnSubscribe(this).subscribe(new BaseResult<BaseResponse<List<CatalogQueryResult>>>() {\n                    @Override\n                    public void onError(ResponseThrowable e) {\n                        KLog.e(e.getMessage());\n                    }\n\n                    @Override\n                    public void onSuccess(BaseResponse<List<CatalogQueryResult>> result) {\n                        catalogQueryResults.clear();\n                        catalogQueryResults.addAll(result.data);\n                    }\n\n                    @Override\n                    public void onComplete() {\n                        dismissDialog();\n                    }\n                });\n    }\n\n    private List<CatalogQueryResult> catalogQueryResults = new ArrayList<>();\n\n\n    public void showRight() {\n        List<String> data = new ArrayList<>();\n        catalogQueryResults.forEach(catalogQueryResult -> data.add(catalogQueryResult.catalogName));\n        if (data.size() == 0) {\n            ToastUtils.showLong(\"分类查询失败\");\n            return;\n        }\n        new WheelViewDialog.Builder(App.getTopActivityInstance()).setTips(\"请选择物资/药品分类\").setList(data).setListener((dialog, position, o) -> {\n            right.set(data.get(position));\n            rightId.set(catalogQueryResults.get(position).id + \"\");\n\n        }).show();\n    }\n\n    public void showLeft() {\n        //0 物资， 1 药品\n        List<String> data = new ArrayList<>();\n        data.add(\"物资\");\n        data.add(\"药品\");\n        new WheelViewDialog.Builder(App.getTopActivityInstance()).setTips(\"请选择药品\").setList(data).setListener((dialog, position, o) -> {\n            String key = String.valueOf(position);\n            leftId.set(key);\n            left.set(data.get(position));\n            catalogQuery();\n        }).show();\n    }\n\n    public void checking() {\n        //重置数据\n        specificationCount = 0;\n        count = 0;\n        checkList.clear();\n        observableList.forEach(materialAddItemViewModel -> {\n            if (materialAddItemViewModel.isCheck.get()) {\n                specificationCount++;\n                checkList.add(materialAddItemViewModel.data.get());\n            }\n        });\n        checkSpecification.set(specificationCount + \"\");\n        checkCount.set(count + \"\");\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/vm/ApplyMaterialsMostViewModel.java b/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/vm/ApplyMaterialsMostViewModel.java
+--- a/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/vm/ApplyMaterialsMostViewModel.java	(revision 12c5f5a306376b62a57b5262690beaf670849515)
++++ b/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/vm/ApplyMaterialsMostViewModel.java	(date 1716992909527)
+@@ -36,8 +36,12 @@
+ import java.util.Map;
+ import java.util.function.Consumer;
+ 
++import io.reactivex.Observable;
++
+ public class ApplyMaterialsMostViewModel extends BaseViewModel<Repository> {
+ 
++    public boolean isOut;
++
+     public ApplyMaterialsMostViewModel(@NonNull Application application, Repository model) {
+         super(application, model);
+     }
+@@ -58,9 +62,9 @@
+     int count = 0;
+     public ObservableField<String> left = new ObservableField<>("物资");
+     public ObservableField<String> leftId = new ObservableField<>("0");
+-    public ObservableField<String> rightId = new ObservableField<>();
++    public ObservableField<String> rightId = new ObservableField<>("");
+ 
+-    public ObservableField<String> right = new ObservableField<>();
++    public ObservableField<String> right = new ObservableField<>("");
+ 
+     public ObservableField<String> name = new ObservableField<>();
+     public ObservableField<String> specification = new ObservableField<>();
+@@ -102,7 +106,7 @@
+ 
+             } else if (id == 3) {
+                 search();
+-            }else if (id==4){
++            } else if (id == 4) {
+                 //save
+                 save.set(!save.get());
+             }
+@@ -112,8 +116,11 @@
+     public ObservableBoolean save = new ObservableBoolean(false);
+ 
+ 
+-
+     private void search() {
++        if (rightId.get().isEmpty()) {
++            ToastUtils.showLong("请选择药品或物资");
++            return;
++        }
+         Map<String, Object> body = new HashMap<>();
+         body.put("type", leftId.get());
+         body.put("catalog", rightId.get());
+@@ -145,7 +152,9 @@
+     public void catalogQuery() {
+         Map<String, Object> body = new HashMap<>();
+         body.put("type", leftId.get());
+-        model.catalogQuery(body).compose(RxUtils.schedulersTransformer()) //线程调度
++        body.put("warehouseId", model.warehouseId());
++        Observable<BaseResponse<List<CatalogQueryResult>>> result = isOut ? model.queryOutMaterialDrug(leftId.get(), model.warehouseId()) : model.catalogQuery(body);
++        result.compose(RxUtils.schedulersTransformer()) //线程调度
+                 .compose(RxUtils.exceptionTransformer()).doOnSubscribe(this).subscribe(new BaseResult<BaseResponse<List<CatalogQueryResult>>>() {
+                     @Override
+                     public void onError(ResponseThrowable e) {
+@@ -170,7 +179,11 @@
+ 
+     public void showRight() {
+         List<String> data = new ArrayList<>();
+-        catalogQueryResults.forEach(catalogQueryResult -> data.add(catalogQueryResult.catalogName));
++
++        catalogQueryResults.forEach(catalogQueryResult -> {
++            String name = catalogQueryResult.catalogName == null ? catalogQueryResult.name : catalogQueryResult.catalogName;
++            data.add(name);
++        });
+         if (data.size() == 0) {
+             ToastUtils.showLong("分类查询失败");
+             return;
+Index: app/src/main/java/com/lib/emergency/rescue/data/Repository.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.lib.emergency.rescue.data;\n\n\nimport androidx.annotation.NonNull;\n\nimport com.hwq.mvvmlibrary.base.BaseModel;\nimport com.hwq.mvvmlibrary.http.BaseResponse;\nimport com.hwq.mvvmlibrary.http.utils.RetrofitClient;\nimport com.lib.emergency.rescue.data.http.HttpDataSource;\nimport com.lib.emergency.rescue.data.http.request.LoginRequest;\nimport com.lib.emergency.rescue.data.http.request.PatientRequest;\nimport com.lib.emergency.rescue.data.http.request.QueryMessageByEventIdAndTaskIdResult;\nimport com.lib.emergency.rescue.data.http.request.QueryVehicleRequest;\nimport com.lib.emergency.rescue.data.http.request.RaptainListRequest;\nimport com.lib.emergency.rescue.data.http.result.ApplyByIdResult;\nimport com.lib.emergency.rescue.data.http.result.ApplyListResult;\nimport com.lib.emergency.rescue.data.http.result.CaptainListResult;\nimport com.lib.emergency.rescue.data.http.result.CatalogQueryResult;\nimport com.lib.emergency.rescue.data.http.result.EmergencyByStatusResult;\nimport com.lib.emergency.rescue.data.http.result.EmergencyDetailResult;\nimport com.lib.emergency.rescue.data.http.result.EmergencyListResult;\nimport com.lib.emergency.rescue.data.http.result.EmergencyTypeResult;\nimport com.lib.emergency.rescue.data.http.result.GetByIdResult;\nimport com.lib.emergency.rescue.data.http.result.HospitalResult;\nimport com.lib.emergency.rescue.data.http.result.ImGroupResult;\nimport com.lib.emergency.rescue.data.http.result.LoginResult;\nimport com.lib.emergency.rescue.data.http.result.MenuResult;\nimport com.lib.emergency.rescue.data.http.result.NoticeResult;\nimport com.lib.emergency.rescue.data.http.result.OneselfSystemMessage;\nimport com.lib.emergency.rescue.data.http.result.PatientDescResult;\nimport com.lib.emergency.rescue.data.http.result.PatientListResult;\nimport com.lib.emergency.rescue.data.http.result.PhiConfigResult;\nimport com.lib.emergency.rescue.data.http.result.QueryApplyListResult;\nimport com.lib.emergency.rescue.data.http.result.QueryApplyMaterialDrugResult;\nimport com.lib.emergency.rescue.data.http.result.QueryEmergencyListResult;\nimport com.lib.emergency.rescue.data.http.result.QueryListResult;\nimport com.lib.emergency.rescue.data.http.result.QueryMaterialApplyMaterialDrugResult;\nimport com.lib.emergency.rescue.data.http.result.QueryOutListResult;\nimport com.lib.emergency.rescue.data.http.result.QueryPersonListResult;\nimport com.lib.emergency.rescue.data.http.result.QueryVehicleResult;\nimport com.lib.emergency.rescue.data.http.result.ShelterResult;\nimport com.lib.emergency.rescue.data.http.result.SysUserSexResult;\nimport com.lib.emergency.rescue.data.http.result.TimeShaftResult;\nimport com.lib.emergency.rescue.data.http.result.UserInfoResult;\nimport com.lib.emergency.rescue.data.http.result.WebSocketUrlResult;\nimport com.lib.emergency.rescue.data.http.result.WsOrPsuResult;\nimport com.lib.emergency.rescue.data.local.LocalDataSource;\nimport com.lib.emergency.rescue.data.local.bean.Message;\nimport com.lib.emergency.rescue.data.local.bean.Session;\nimport com.lib.emergency.rescue.data.local.bean.User;\nimport com.lib.emergency.rescue.ui.im.bean.SessionWithUnreadCount;\n\n\nimport java.util.List;\nimport java.util.Map;\n\nimport io.reactivex.Observable;\n\n\n/**\n * A simple {@link Repository} 管理仓库（本地和网络数据）.\n * Created by WenqiangHuang\n * Creation time 2020/7/29\n * Email vieqqw@163.com\n */\npublic class Repository extends BaseModel implements HttpDataSource, LocalDataSource {\n    private volatile static Repository INSTANCE = null;\n    //网络数据\n    private final HttpDataSource mHttpDataSource;\n    //本地数据\n    private final LocalDataSource mLocalDataSource;\n\n    private Repository(@NonNull HttpDataSource httpDataSource, @NonNull LocalDataSource localDataSource) {\n        this.mHttpDataSource = httpDataSource;\n        this.mLocalDataSource = localDataSource;\n    }\n\n    public static Repository getInstance(HttpDataSource httpDataSource, LocalDataSource localDataSource) {\n        if (INSTANCE == null) {\n            synchronized (Repository.class) {\n                if (INSTANCE == null) {\n                    INSTANCE = new Repository(httpDataSource, localDataSource);\n                }\n            }\n        }\n        return INSTANCE;\n    }\n\n    @Override\n    public void insert(Message message) {\n        mLocalDataSource.insert(message);\n    }\n\n    @Override\n    public List<Message> getUnreadMessagesForSession(int sessionId, String userId) {\n        return mLocalDataSource.getUnreadMessagesForSession(sessionId, userId);\n    }\n\n    @Override\n    public List<Message> getMessagesForSession(int sessionId, String userId) {\n        return mLocalDataSource.getMessagesForSession(sessionId, userId);\n    }\n\n    @Override\n    public void update(Message session) {\n        mLocalDataSource.update(session);\n    }\n\n    @Override\n    public void insert(Session session) {\n        mLocalDataSource.insert(session);\n    }\n\n    @Override\n    public void update(Session session) {\n        mLocalDataSource.update(session);\n    }\n\n    @Override\n    public Session findSingleChatBySendUserId(String sendUserId, String userId) {\n        return mLocalDataSource.findSingleChatBySendUserId(sendUserId, userId);\n    }\n\n    @Override\n    public Session findGroupChatByReceiverGroupId(String receiverGroupId, String userId) {\n        return mLocalDataSource.findGroupChatByReceiverGroupId(receiverGroupId, userId);\n    }\n\n    @Override\n    public List<Session> getAllSessions(String userId) {\n        return mLocalDataSource.getAllSessions(userId);\n    }\n\n    @Override\n    public void updateUnreadStatus(int sessionId, boolean isUnread, String msgContext, int unreadCount, String userId) {\n        mLocalDataSource.updateUnreadStatus(sessionId, isUnread, msgContext, unreadCount, userId);\n    }\n\n    @Override\n    public void insert(User item) {\n        mLocalDataSource.insert(item);\n    }\n\n    @Override\n    public void delete(User item) {\n        mLocalDataSource.delete(item);\n    }\n\n    @Override\n    public void update(User item) {\n\n        mLocalDataSource.update(item);\n    }\n\n    @Override\n    public User findByUser(String user) {\n        return mLocalDataSource.findByUser(user);\n    }\n\n    @Override\n    public void saveAccount(String account) {\n        mLocalDataSource.saveAccount(account);\n    }\n\n    @Override\n    public void savePassWord(String passWord) {\n        mLocalDataSource.savePassWord(passWord);\n    }\n\n    @Override\n    public String getAccount() {\n        return mLocalDataSource.getAccount();\n    }\n\n    @Override\n    public String getPsd() {\n        return mLocalDataSource.getPsd();\n    }\n\n    @Override\n    public void userInfo(String json) {\n        mLocalDataSource.userInfo(json);\n    }\n\n    @Override\n    public UserInfoResult getUserInfo() {\n        return mLocalDataSource.getUserInfo();\n    }\n\n    @Override\n    public void setEventId(long eventId) {\n        mLocalDataSource.setEventId(eventId);\n    }\n\n    @Override\n    public long eventId() {\n        return mLocalDataSource.eventId();\n    }\n\n    @Override\n    public void setToken(String token) {\n        mLocalDataSource.setToken(token);\n    }\n\n    @Override\n    public String token() {\n        return mLocalDataSource.token();\n    }\n\n    @Override\n    public Observable<BaseResponse<LoginResult>> login(LoginRequest login) {\n        return mHttpDataSource.login(login);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<MenuResult>>> getMenu(String userId, String systemId) {\n        return mHttpDataSource.getMenu(userId, systemId);\n    }\n\n    @Override\n    public Observable<BaseResponse<UserInfoResult>> getUserInfo(String userId) {\n        return mHttpDataSource.getUserInfo(userId);\n    }\n\n    @Override\n    public Observable<BaseResponse<NoticeResult>> getNotice(int page, int pageSize) {\n        return mHttpDataSource.getNotice(page, pageSize);\n    }\n\n    @Override\n    public Observable<BaseResponse<WsOrPsuResult>> getWsOrPsu(String wristbandSn) {\n        return mHttpDataSource.getWsOrPsu(wristbandSn);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> sys_user_sex() {\n        return mHttpDataSource.sys_user_sex();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> patient_type() {\n        return mHttpDataSource.patient_type();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> consciousness() {\n        return mHttpDataSource.consciousness();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> additionalinjury() {\n        return mHttpDataSource.additionalinjury();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> comp_amb_bype() {\n        return mHttpDataSource.comp_amb_bype();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> facility_check_state() {\n        return mHttpDataSource.facility_check_state();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<PhiConfigResult>>> list() {\n        return mHttpDataSource.list();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<QueryVehicleResult>>> queryVehicle(QueryVehicleRequest request) {\n        return mHttpDataSource.queryVehicle(request);\n    }\n\n    @Override\n    public Observable<BaseResponse<ShelterResult>> shelter(String current, String size, String shelterName) {\n        return mHttpDataSource.shelter(current, size, shelterName);\n    }\n\n    @Override\n    public Observable<BaseResponse<HospitalResult>> hospital(String current, String size, String institutionalName) {\n        return mHttpDataSource.hospital(current, size, institutionalName);\n    }\n\n    @Override\n    public Observable<BaseResponse> patient(PatientRequest request) {\n        return mHttpDataSource.patient(request);\n    }\n\n    @Override\n    public Observable<BaseResponse<OneselfSystemMessage>> getOneselfSystemMessagePage(int page, int pageSize, int total) {\n        return mHttpDataSource.getOneselfSystemMessagePage(page, pageSize, total);\n    }\n\n    @Override\n    public Observable<BaseResponse<EmergencyByStatusResult>> getEmergencyByStatus(String teamId) {\n        return mHttpDataSource.getEmergencyByStatus(teamId);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<PatientListResult>>> patientList(int eventId, int current, int size, Integer judgementInjury) {\n        return mHttpDataSource.patientList(eventId, current, size, judgementInjury);\n    }\n\n    @Override\n    public Observable<BaseResponse<PatientDescResult>> patient(int id) {\n        return mHttpDataSource.patient(id);\n    }\n\n    @Override\n    public Observable<BaseResponse<EmergencyListResult>> emergencyList(int eportTimeType, String teamId, int size) {\n        return mHttpDataSource.emergencyList(eportTimeType, teamId, size);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<QueryPersonListResult>>> queryPersonList(String emergencyId) {\n        return mHttpDataSource.queryPersonList(emergencyId);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<TimeShaftResult>>> timeShaft(String eventId) {\n        return mHttpDataSource.timeShaft(eventId);\n    }\n\n    @Override\n    public Observable<BaseResponse<EmergencyDetailResult>> queryEmergencyDetail(int id) {\n        return mHttpDataSource.queryEmergencyDetail(id);\n    }\n\n    @Override\n    public Observable<BaseResponse<CaptainListResult>> captainList(RaptainListRequest id) {\n        return mHttpDataSource.captainList(id);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<EmergencyTypeResult>>> emergencyType(Object o) {\n        return mHttpDataSource.emergencyType(o);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> sys_event_source() {\n        return mHttpDataSource.sys_event_source();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> sys_event_type() {\n        return mHttpDataSource.sys_event_type();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> multiple_tag() {\n        return mHttpDataSource.multiple_tag();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> sys_event_level() {\n        return mHttpDataSource.sys_event_level();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<QueryApplyListResult>>> queryApplyList(Map<String, Object> body) {\n        return mHttpDataSource.queryApplyList(body);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<QueryApplyMaterialDrugResult>>> queryApplyMaterialDrug(Map<String, Object> body) {\n        return mHttpDataSource.queryApplyMaterialDrug(body);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<CatalogQueryResult>>> catalogQuery(Map<String, Object> body) {\n        return mHttpDataSource.catalogQuery(body);\n    }\n\n    @Override\n    public Observable<BaseResponse> saveApply(Map<String, Object> body) {\n        return mHttpDataSource.saveApply(body);\n    }\n\n    @Override\n    public Observable<BaseResponse<ApplyByIdResult>> getApplyById(String id) {\n        return mHttpDataSource.getApplyById(id);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<QueryListResult>>> queryList(Map<String, Object> id) {\n        return mHttpDataSource.queryList(id);\n    }\n\n    @Override\n    public Observable<BaseResponse> apply(Map<String, Object> id) {\n        return mHttpDataSource.apply(id);\n    }\n\n    @Override\n    public Observable<BaseResponse<WebSocketUrlResult>> getWebSocketUrl(Object o) {\n        return mHttpDataSource.getWebSocketUrl(0);\n    }\n\n    @Override\n    public Observable<BaseResponse<ImGroupResult>> imGroup(int size) {\n        return mHttpDataSource.imGroup(size);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> ti_position() {\n        return mHttpDataSource.ti_position();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> ti_trauma_type() {\n        return mHttpDataSource.ti_trauma_type();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> ti_breath() {\n        return mHttpDataSource.ti_breath();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> ti_awareness() {\n        return mHttpDataSource.ti_awareness();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> gcs_verbal_response() {\n        return mHttpDataSource.gcs_verbal_response();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> gcs_body_movement() {\n        return mHttpDataSource.gcs_body_movement();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> ts_blood_capillary() {\n        return mHttpDataSource.ts_blood_capillary();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> ts_breathe_rate() {\n        return mHttpDataSource.ts_breathe_rate();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> ts_gcs_standard() {\n        return mHttpDataSource.ts_gcs_standard();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> gcs_eye_open() {\n        return mHttpDataSource.gcs_eye_open();\n    }\n\n    @Override\n    public String userId() {\n        return mLocalDataSource.userId();\n    }\n\n    @Override\n    public boolean isLogin() {\n\n        return mLocalDataSource.isLogin();\n    }\n\n    @Override\n    public void setLogin(boolean isLogin) {\n        mLocalDataSource.setLogin(isLogin);\n    }\n\n    @Override\n    public String warehouseId() {\n        return mLocalDataSource.warehouseId();\n    }\n\n    @Override\n    public void setWarehouseId(String warehouseId) {\n        mLocalDataSource.setWarehouseId(warehouseId);\n    }\n\n    @Override\n    public void saveUserId(String userId) {\n        mLocalDataSource.saveUserId(userId);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> dic(String path) {\n        return mHttpDataSource.dic(path);\n    }\n\n    @Override\n    public Observable<BaseResponse<String>> getScore(Map<String, Object> id) {\n        return mHttpDataSource.getScore(id);\n    }\n\n    @Override\n    public Observable<BaseResponse<QueryMessageByEventIdAndTaskIdResult>> queryMessageByEventIdAndTaskId(String eventId, String taskId) {\n        return mHttpDataSource.queryMessageByEventIdAndTaskId(eventId, taskId);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<QueryEmergencyListResult>>> queryEmergencyList(Map<String, Object> prams) {\n        return mHttpDataSource.queryEmergencyList(prams);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> ApplyById(String id) {\n        return mHttpDataSource.ApplyById(id);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<ApplyListResult>>> applyList(Map<String, Object> prams) {\n        return mHttpDataSource.applyList(prams);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<QueryMaterialApplyMaterialDrugResult>>> queryMaterialApplyMaterialDrug(Map<String, Object> prams) {\n        return mHttpDataSource.queryMaterialApplyMaterialDrug(prams);\n    }\n\n    @Override\n    public Observable<BaseResponse> materialSaveApply(Map<String, Object> prams) {\n        return mHttpDataSource.materialSaveApply(prams);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<QueryOutListResult>>> queryOutList(String warehouseId) {\n        return mHttpDataSource.queryOutList(warehouseId);\n    }\n\n    @Override\n    public Observable<BaseResponse<GetByIdResult>> getById(String id) {\n        return mHttpDataSource.getById(id);\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/lib/emergency/rescue/data/Repository.java b/app/src/main/java/com/lib/emergency/rescue/data/Repository.java
+--- a/app/src/main/java/com/lib/emergency/rescue/data/Repository.java	(revision 12c5f5a306376b62a57b5262690beaf670849515)
++++ b/app/src/main/java/com/lib/emergency/rescue/data/Repository.java	(date 1716989730635)
+@@ -33,6 +33,7 @@
+ import com.lib.emergency.rescue.data.http.result.QueryApplyListResult;
+ import com.lib.emergency.rescue.data.http.result.QueryApplyMaterialDrugResult;
+ import com.lib.emergency.rescue.data.http.result.QueryEmergencyListResult;
++import com.lib.emergency.rescue.data.http.result.QueryEmergencyTeamResult;
+ import com.lib.emergency.rescue.data.http.result.QueryListResult;
+ import com.lib.emergency.rescue.data.http.result.QueryMaterialApplyMaterialDrugResult;
+ import com.lib.emergency.rescue.data.http.result.QueryOutListResult;
+@@ -532,4 +533,20 @@
+     public Observable<BaseResponse<GetByIdResult>> getById(String id) {
+         return mHttpDataSource.getById(id);
+     }
++
++    @Override
++    public Observable<BaseResponse<List<QueryEmergencyTeamResult>>> queryEmergencyTeam(String dipEventId) {
++        return mHttpDataSource.queryEmergencyTeam(dipEventId);
++    }
++
++    @Override
++    public Observable<BaseResponse> saveOut(Map<String, Object> prams) {
++        return mHttpDataSource.saveOut(prams);
++    }
++
++
++    @Override
++    public Observable<BaseResponse<List<CatalogQueryResult>>> queryOutMaterialDrug(String type, String warehouseId) {
++        return mHttpDataSource.queryOutMaterialDrug(type,warehouseId);
++    }
+ }
+Index: app/src/main/java/com/lib/emergency/rescue/data/http/result/CatalogQueryResult.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.lib.emergency.rescue.data.http.result;\n\npublic class CatalogQueryResult {\n\n    public String catalogName;\n    public String id;\n    public String type;\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/lib/emergency/rescue/data/http/result/CatalogQueryResult.java b/app/src/main/java/com/lib/emergency/rescue/data/http/result/CatalogQueryResult.java
+--- a/app/src/main/java/com/lib/emergency/rescue/data/http/result/CatalogQueryResult.java	(revision 12c5f5a306376b62a57b5262690beaf670849515)
++++ b/app/src/main/java/com/lib/emergency/rescue/data/http/result/CatalogQueryResult.java	(date 1716992993475)
+@@ -5,4 +5,7 @@
+     public String catalogName;
+     public String id;
+     public String type;
++    public String name;
++
++
+ }
+Index: app/src/main/java/com/lib/emergency/rescue/data/http/HttpDataSourceImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.lib.emergency.rescue.data.http;\n\n\nimport com.hwq.mvvmlibrary.http.BaseResponse;\nimport com.hwq.mvvmlibrary.http.utils.RetrofitClient;\nimport com.lib.emergency.rescue.data.http.request.LoginRequest;\nimport com.lib.emergency.rescue.data.http.request.PatientRequest;\nimport com.lib.emergency.rescue.data.http.request.QueryMessageByEventIdAndTaskIdResult;\nimport com.lib.emergency.rescue.data.http.request.QueryVehicleRequest;\nimport com.lib.emergency.rescue.data.http.request.RaptainListRequest;\nimport com.lib.emergency.rescue.data.http.result.ApplyByIdResult;\nimport com.lib.emergency.rescue.data.http.result.ApplyListResult;\nimport com.lib.emergency.rescue.data.http.result.CaptainListResult;\nimport com.lib.emergency.rescue.data.http.result.CatalogQueryResult;\nimport com.lib.emergency.rescue.data.http.result.EmergencyByStatusResult;\nimport com.lib.emergency.rescue.data.http.result.EmergencyDetailResult;\nimport com.lib.emergency.rescue.data.http.result.EmergencyListResult;\nimport com.lib.emergency.rescue.data.http.result.EmergencyTypeResult;\nimport com.lib.emergency.rescue.data.http.result.GetByIdResult;\nimport com.lib.emergency.rescue.data.http.result.HospitalResult;\nimport com.lib.emergency.rescue.data.http.result.ImGroupResult;\nimport com.lib.emergency.rescue.data.http.result.LoginResult;\nimport com.lib.emergency.rescue.data.http.result.MenuResult;\nimport com.lib.emergency.rescue.data.http.result.NoticeResult;\nimport com.lib.emergency.rescue.data.http.result.OneselfSystemMessage;\nimport com.lib.emergency.rescue.data.http.result.PatientDescResult;\nimport com.lib.emergency.rescue.data.http.result.PatientListResult;\nimport com.lib.emergency.rescue.data.http.result.PhiConfigResult;\nimport com.lib.emergency.rescue.data.http.result.QueryApplyListResult;\nimport com.lib.emergency.rescue.data.http.result.QueryApplyMaterialDrugResult;\nimport com.lib.emergency.rescue.data.http.result.QueryEmergencyListResult;\nimport com.lib.emergency.rescue.data.http.result.QueryListResult;\nimport com.lib.emergency.rescue.data.http.result.QueryMaterialApplyMaterialDrugResult;\nimport com.lib.emergency.rescue.data.http.result.QueryOutListResult;\nimport com.lib.emergency.rescue.data.http.result.QueryPersonListResult;\nimport com.lib.emergency.rescue.data.http.result.QueryVehicleResult;\nimport com.lib.emergency.rescue.data.http.result.ShelterResult;\nimport com.lib.emergency.rescue.data.http.result.SysUserSexResult;\nimport com.lib.emergency.rescue.data.http.result.TimeShaftResult;\nimport com.lib.emergency.rescue.data.http.result.UserInfoResult;\nimport com.lib.emergency.rescue.data.http.result.WebSocketUrlResult;\nimport com.lib.emergency.rescue.data.http.result.WsOrPsuResult;\n\nimport java.util.List;\nimport java.util.Map;\nimport java.util.Objects;\n\nimport io.reactivex.Observable;\n\n/**\n * A simple {@link HttpDataSourceImpl} subclass.\n * Created by WenqiangHuang\n * Creation time 2020/7/29\n * Email vieqqw@163.com\n */\npublic class HttpDataSourceImpl implements HttpDataSource {\n\n\n    private volatile static HttpDataSourceImpl INSTANCE = null;\n\n    public static HttpDataSourceImpl getInstance() {\n        if (INSTANCE == null) {\n            synchronized (HttpDataSourceImpl.class) {\n                if (INSTANCE == null) {\n                    INSTANCE = new HttpDataSourceImpl();\n                }\n            }\n        }\n        return INSTANCE;\n    }\n\n    public static void destroyInstance() {\n        INSTANCE = null;\n    }\n\n\n    private HttpDataSourceImpl() {\n\n    }\n\n\n    @Override\n    public Observable<BaseResponse<LoginResult>> login(LoginRequest login) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).login(login);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<MenuResult>>> getMenu(String userId, String systemId) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).getMenu(userId, systemId);\n    }\n\n    @Override\n    public Observable<BaseResponse<UserInfoResult>> getUserInfo(String userId) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).getUserInfo(userId);\n    }\n\n    @Override\n    public Observable<BaseResponse<NoticeResult>> getNotice(int page, int pageSize) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).getNotice(page, pageSize);\n    }\n\n    @Override\n    public Observable<BaseResponse<WsOrPsuResult>> getWsOrPsu(String wristbandSn) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).getWsOrPsu(wristbandSn);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> sys_user_sex() {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).sys_user_sex();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> patient_type() {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).patient_type();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> consciousness() {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).consciousness();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> additionalinjury() {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).additionalinjury();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> comp_amb_bype() {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).comp_amb_bype();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> facility_check_state() {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).facility_check_state();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<PhiConfigResult>>> list() {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).list();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<QueryVehicleResult>>> queryVehicle(QueryVehicleRequest request) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).queryVehicle(request);\n    }\n\n    @Override\n    public Observable<BaseResponse<ShelterResult>> shelter(String current, String size, String shelterName) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).shelter(current, size, shelterName);\n    }\n\n    @Override\n    public Observable<BaseResponse<HospitalResult>> hospital(String current, String size, String institutionalName) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).hospital(current, size, institutionalName);\n    }\n\n    @Override\n    public Observable<BaseResponse> patient(PatientRequest request) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).patient(request);\n    }\n\n    @Override\n    public Observable<BaseResponse<OneselfSystemMessage>> getOneselfSystemMessagePage(int page, int pageSize, int total) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).getOneselfSystemMessagePage(page, pageSize, total);\n    }\n\n    @Override\n    public Observable<BaseResponse<EmergencyByStatusResult>> getEmergencyByStatus(String teamId) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).getEmergencyByStatus(teamId);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<PatientListResult>>> patientList(int eventId, int current, int size, Integer judgementInjury) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).patientList(eventId, current, size, judgementInjury);\n    }\n\n    @Override\n    public Observable<BaseResponse<PatientDescResult>> patient(int id) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).patient(id);\n    }\n\n    @Override\n    public Observable<BaseResponse<EmergencyListResult>> emergencyList(int eportTimeType, String teamId, int size) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).emergencyList(eportTimeType,teamId,size);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<QueryPersonListResult>>> queryPersonList(String emergencyId) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).queryPersonList(emergencyId);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<TimeShaftResult>>> timeShaft(String eventId) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).timeShaft(eventId);\n    }\n\n    @Override\n    public Observable<BaseResponse<EmergencyDetailResult>> queryEmergencyDetail(int id) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).queryEmergencyDetail(id);\n    }\n\n    @Override\n    public Observable<BaseResponse<CaptainListResult>> captainList(RaptainListRequest request) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).captainList(request);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<EmergencyTypeResult>>> emergencyType(Object o) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).emergencyType(o);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> sys_event_source() {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).sys_event_source();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> sys_event_type() {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).sys_event_source();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> multiple_tag() {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).multiple_tag();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> sys_event_level() {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).sys_event_level();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<QueryApplyListResult>>> queryApplyList(Map<String, Object> body) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).queryApplyList(body);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<QueryApplyMaterialDrugResult>>> queryApplyMaterialDrug(Map<String, Object> body) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).queryApplyMaterialDrug(body);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<CatalogQueryResult>>> catalogQuery(Map<String, Object> body) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).catalogQuery(body);\n    }\n\n    @Override\n    public Observable<BaseResponse> saveApply(Map<String, Object> body) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).saveApply(body);\n    }\n\n    @Override\n    public Observable<BaseResponse<ApplyByIdResult>> getApplyById(String id) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).getApplyById(id);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<QueryListResult>>> queryList(Map<String, Object> id) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).queryList(id);\n    }\n\n    @Override\n    public Observable<BaseResponse> apply(Map<String, Object> id) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).apply(id);\n    }\n\n    @Override\n    public Observable<BaseResponse<WebSocketUrlResult>> getWebSocketUrl(Object o) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).getWebSocketUrl(o);\n    }\n\n    @Override\n    public Observable<BaseResponse<ImGroupResult>> imGroup(int size) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).imGroup(size);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> ti_position() {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).ti_position();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> ti_trauma_type() {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).ti_trauma_type();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> ti_breath() {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).ti_breath();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> ti_awareness() {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).ti_awareness();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> gcs_verbal_response() {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).gcs_verbal_response();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> gcs_body_movement() {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).gcs_body_movement();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> ts_blood_capillary() {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).ts_blood_capillary();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> ts_breathe_rate() {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).ts_breathe_rate();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> ts_gcs_standard() {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).ts_gcs_standard();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> gcs_eye_open() {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).gcs_eye_open();\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> dic(String path) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).dic(path);\n    }\n\n    @Override\n    public Observable<BaseResponse<String>> getScore(Map<String, Object> id) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).getScore(id);\n    }\n\n    @Override\n    public Observable<BaseResponse<QueryMessageByEventIdAndTaskIdResult>> queryMessageByEventIdAndTaskId(String eventId, String taskId) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).queryMessageByEventIdAndTaskId(eventId,taskId);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<QueryEmergencyListResult>>> queryEmergencyList(Map<String, Object> prams) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).queryEmergencyList(prams);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<SysUserSexResult>>> ApplyById(String id) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).ApplyById(id);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<ApplyListResult>>> applyList(Map<String, Object> prams) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).applyList(prams);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<QueryMaterialApplyMaterialDrugResult>>> queryMaterialApplyMaterialDrug(Map<String, Object> prams) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).queryMaterialApplyMaterialDrug(prams);\n    }\n\n    @Override\n    public Observable<BaseResponse> materialSaveApply(Map<String, Object> prams) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).materialSaveApply(prams);\n    }\n\n    @Override\n    public Observable<BaseResponse<List<QueryOutListResult>>> queryOutList(String warehouseId) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).queryOutList(warehouseId);\n    }\n\n    @Override\n    public Observable<BaseResponse<GetByIdResult>> getById(String id) {\n        return RetrofitClient.builder().apply().create(HttpDataSource.class).getById(id);\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/lib/emergency/rescue/data/http/HttpDataSourceImpl.java b/app/src/main/java/com/lib/emergency/rescue/data/http/HttpDataSourceImpl.java
+--- a/app/src/main/java/com/lib/emergency/rescue/data/http/HttpDataSourceImpl.java	(revision 12c5f5a306376b62a57b5262690beaf670849515)
++++ b/app/src/main/java/com/lib/emergency/rescue/data/http/HttpDataSourceImpl.java	(date 1716989854989)
+@@ -29,6 +29,7 @@
+ import com.lib.emergency.rescue.data.http.result.QueryApplyListResult;
+ import com.lib.emergency.rescue.data.http.result.QueryApplyMaterialDrugResult;
+ import com.lib.emergency.rescue.data.http.result.QueryEmergencyListResult;
++import com.lib.emergency.rescue.data.http.result.QueryEmergencyTeamResult;
+ import com.lib.emergency.rescue.data.http.result.QueryListResult;
+ import com.lib.emergency.rescue.data.http.result.QueryMaterialApplyMaterialDrugResult;
+ import com.lib.emergency.rescue.data.http.result.QueryOutListResult;
+@@ -373,4 +374,23 @@
+     public Observable<BaseResponse<GetByIdResult>> getById(String id) {
+         return RetrofitClient.builder().apply().create(HttpDataSource.class).getById(id);
+     }
++
++    @Override
++    public Observable<BaseResponse<List<QueryEmergencyTeamResult>>> queryEmergencyTeam(String dipEventId) {
++        return RetrofitClient.builder().apply().create(HttpDataSource.class).queryEmergencyTeam(dipEventId);
++    }
++
++
++
++    @Override
++    public Observable<BaseResponse> saveOut(Map<String, Object> prams) {
++        return RetrofitClient.builder().apply().create(HttpDataSource.class).saveOut(prams);
++    }
++
++
++
++    @Override
++    public Observable<BaseResponse<List<CatalogQueryResult>>> queryOutMaterialDrug(String type, String warehouseId) {
++        return RetrofitClient.builder().apply().create(HttpDataSource.class).queryOutMaterialDrug(type,warehouseId);
++    }
+ }
+Index: app/src/main/java/com/lib/emergency/rescue/data/http/result/QueryEmergencyTeamResult.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/lib/emergency/rescue/data/http/result/QueryEmergencyTeamResult.java b/app/src/main/java/com/lib/emergency/rescue/data/http/result/QueryEmergencyTeamResult.java
+new file mode 100644
+--- /dev/null	(date 1716970163547)
++++ b/app/src/main/java/com/lib/emergency/rescue/data/http/result/QueryEmergencyTeamResult.java	(date 1716970163547)
+@@ -0,0 +1,38 @@
++package com.lib.emergency.rescue.data.http.result;
++
++import com.google.gson.annotations.SerializedName;
++
++public class QueryEmergencyTeamResult {
++
++
++    @SerializedName("id")
++    public String id;
++    @SerializedName("parentId")
++    public String parentId;
++    @SerializedName("ancestors")
++    public String ancestors;
++    @SerializedName("type")
++    public String type;
++    @SerializedName("teamName")
++    public String teamName;
++    @SerializedName("teamLevel")
++    public String teamLevel;
++    @SerializedName("userName")
++    public String userName;
++    @SerializedName("phone")
++    public String phone;
++    @SerializedName("address")
++    public String address;
++    @SerializedName("longitude")
++    public String longitude;
++    @SerializedName("latitude")
++    public String latitude;
++    @SerializedName("delFlag")
++    public int delFlag;
++    @SerializedName("sort")
++    public Object sort;
++    @SerializedName("satellitePhone")
++    public Object satellitePhone;
++    @SerializedName("dispatchState")
++    public int dispatchState;
++}
+Index: app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/vm/ApplyViewModel.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.lib.emergency.rescue.ui.work.ui.activity.materials_manager.vm;\n\nimport android.app.Application;\n\nimport androidx.annotation.NonNull;\nimport androidx.databinding.ObservableArrayList;\nimport androidx.databinding.ObservableField;\nimport androidx.databinding.ObservableList;\n\nimport com.hwq.mvvmlibrary.base.BaseViewModel;\nimport com.hwq.mvvmlibrary.binding.adapter.ItemBinding;\nimport com.hwq.mvvmlibrary.binding.command.BindingAction;\nimport com.hwq.mvvmlibrary.binding.command.BindingCommand;\nimport com.hwq.mvvmlibrary.http.BaseResponse;\nimport com.hwq.mvvmlibrary.http.ResponseThrowable;\nimport com.hwq.mvvmlibrary.utils.RxUtils;\nimport com.lib.emergency.rescue.BR;\nimport com.lib.emergency.rescue.R;\nimport com.lib.emergency.rescue.data.Repository;\nimport com.lib.emergency.rescue.data.http.BaseResult;\nimport com.lib.emergency.rescue.data.http.result.ApplyListResult;\nimport com.lib.emergency.rescue.data.http.result.QueryEmergencyListResult;\nimport com.lib.emergency.rescue.ui.work.ui.activity.materials_manager.ApplyMaterialsActivity;\n\nimport java.util.HashMap;\nimport java.util.List;\nimport java.util.Map;\n\nimport io.reactivex.Observable;\n\npublic class ApplyViewModel extends BaseViewModel<Repository> {\n    public ApplyViewModel(@NonNull Application application, Repository model) {\n        super(application, model);\n    }\n\n    public ObservableField<QueryEmergencyListResult> data = new ObservableField<>();\n\n    //给RecyclerView添加items\n    public ObservableList<ApplyItemViewModel> observableList = new ObservableArrayList<>();\n    //给RecyclerView添加ItemBinding\n    public ItemBinding<ApplyItemViewModel> itemBinding = ItemBinding.of((itemBinding, position, item) -> {\n        if (item.type == 0) {\n            itemBinding.set(BR.item, R.layout.activity_apple_1_item);\n        } else if (item.type == 1) {\n            itemBinding.set(BR.item, R.layout.activity_apple_2_item);\n        } else {\n            itemBinding.set(BR.item, R.layout.activity_apple_3_item);\n        }\n    });\n\n    public void initData() {\n        isCreate = false;\n        observableList.clear();\n        Map<String, Object> prams = new HashMap<>();\n        prams.put(\"dipEmergencyId\", \"\");\n        prams.put(\"examineState\", \"\");//审核状态（0未处理，1已拒绝，2已处理）\n        prams.put(\"warehouseId\", data.get().warehouseId);\n        Observable<BaseResponse<List<ApplyListResult>>> queryEmergencyList = model.applyList(prams);\n        queryEmergencyList.compose(RxUtils.schedulersTransformer()) //线程调度\n                .compose(RxUtils.exceptionTransformer()).doOnSubscribe(this).subscribe(new BaseResult<BaseResponse<List<ApplyListResult>>>() {\n\n                    @Override\n                    public void onError(ResponseThrowable e) {\n\n                    }\n\n                    @Override\n                    public void onSuccess(BaseResponse<List<ApplyListResult>> result) {\n\n                    }\n\n                    @Override\n                    public void onSuccessData(BaseResponse<List<ApplyListResult>> result) {\n\n                        result.data.forEach(applyListResult -> observableList.add(new ApplyItemViewModel(ApplyViewModel.this, applyListResult)));\n                    }\n                });\n\n    }\n\n    public boolean isCreate = true;\n    @Override\n    public void onCreate() {\n        titleViewModel.rightTextOnClickCommand = new BindingCommand(() -> {\n            startActivity(ApplyMaterialsActivity.class);\n            isCreate = true;\n        });\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/vm/ApplyViewModel.java b/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/vm/ApplyViewModel.java
+--- a/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/vm/ApplyViewModel.java	(revision 12c5f5a306376b62a57b5262690beaf670849515)
++++ b/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/vm/ApplyViewModel.java	(date 1716972636109)
+@@ -1,6 +1,7 @@
+ package com.lib.emergency.rescue.ui.work.ui.activity.materials_manager.vm;
+ 
+ import android.app.Application;
++import android.os.Bundle;
+ 
+ import androidx.annotation.NonNull;
+ import androidx.databinding.ObservableArrayList;
+@@ -20,6 +21,8 @@
+ import com.lib.emergency.rescue.data.http.BaseResult;
+ import com.lib.emergency.rescue.data.http.result.ApplyListResult;
+ import com.lib.emergency.rescue.data.http.result.QueryEmergencyListResult;
++import com.lib.emergency.rescue.router.Router;
++import com.lib.emergency.rescue.router.RouterPath;
+ import com.lib.emergency.rescue.ui.work.ui.activity.materials_manager.ApplyMaterialsActivity;
+ 
+ import java.util.HashMap;
+@@ -79,10 +82,14 @@
+     }
+ 
+     public boolean isCreate = true;
++
+     @Override
+     public void onCreate() {
+         titleViewModel.rightTextOnClickCommand = new BindingCommand(() -> {
+-            startActivity(ApplyMaterialsActivity.class);
++            Router.getInstance()
++                    .build(RouterPath.HOME.ROUTER_APPLY)
++                    .putInt("type",1)
++                    .navigation();
+             isCreate = true;
+         });
+     }
+Index: app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/ApplyMaterialsMostActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.lib.emergency.rescue.ui.work.ui.activity.materials_manager;\n\nimport android.content.Intent;\nimport android.os.Bundle;\nimport android.os.Parcelable;\nimport android.view.LayoutInflater;\nimport android.view.ViewGroup;\n\nimport androidx.annotation.Nullable;\nimport androidx.databinding.Observable;\n\nimport com.hwq.mvvmlibrary.base.BaseActivity;\nimport com.hwq.mvvmlibrary.base.BaseFragment;\nimport com.hwq.mvvmlibrary.utils.ToastUtils;\nimport com.lib.emergency.rescue.App;\nimport com.lib.emergency.rescue.BR;\nimport com.lib.emergency.rescue.R;\nimport com.lib.emergency.rescue.data.Injection;\nimport com.lib.emergency.rescue.databinding.FragmentApplyMaterialsMostBinding;\nimport com.lib.emergency.rescue.ui.work.ui.activity.materials_manager.vm.ApplyMaterialsMostViewModel;\n\nimport java.util.ArrayList;\n\n/**\n * 物资申请批量\n */\npublic class ApplyMaterialsMostActivity extends BaseActivity<FragmentApplyMaterialsMostBinding, ApplyMaterialsMostViewModel> {\n\n\n    @Override\n    public int initContentView(Bundle savedInstanceState) {\n        return R.layout.fragment_apply_materials_most;\n    }\n\n    @Override\n    public int initVariableId() {\n        return BR.viewModel;\n    }\n\n    @Override\n    public ApplyMaterialsMostViewModel initViewModel() {\n        return new ApplyMaterialsMostViewModel(App.getInstance(), Injection.provideDemoRepository(this));\n    }\n\n    @Override\n    public void initData() {\n        viewModel.catalogQuery();\n    }\n\n    @Override\n    public void initViewObservable() {\n        viewModel.save.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {\n            @Override\n            public void onPropertyChanged(Observable sender, int propertyId) {\n                if (viewModel.checkList.size()>0){\n                    Intent intent = new Intent();\n                    intent.putExtra(\"leftId\",viewModel.leftId.get());\n                    intent.putParcelableArrayListExtra(\"list\", (ArrayList<? extends Parcelable>) viewModel.checkList);\n                    setResult(100, intent);\n                    finish();\n                }else {\n                    ToastUtils.showLong(\"请批量选择数据\");\n                }\n            }\n        });\n    }\n\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/ApplyMaterialsMostActivity.java b/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/ApplyMaterialsMostActivity.java
+--- a/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/ApplyMaterialsMostActivity.java	(revision 12c5f5a306376b62a57b5262690beaf670849515)
++++ b/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/ApplyMaterialsMostActivity.java	(date 1716988254481)
+@@ -11,6 +11,8 @@
+ 
+ import com.hwq.mvvmlibrary.base.BaseActivity;
+ import com.hwq.mvvmlibrary.base.BaseFragment;
++import com.hwq.mvvmlibrary.base.BaseViewModel;
++import com.hwq.mvvmlibrary.utils.KLog;
+ import com.hwq.mvvmlibrary.utils.ToastUtils;
+ import com.lib.emergency.rescue.App;
+ import com.lib.emergency.rescue.BR;
+@@ -44,6 +46,11 @@
+ 
+     @Override
+     public void initData() {
++
++        boolean isOut = getIntent().getBooleanExtra("isOut", false);
++        viewModel.isOut = isOut;
++        KLog.e(isOut);
++
+         viewModel.catalogQuery();
+     }
+ 
+@@ -52,13 +59,13 @@
+         viewModel.save.addOnPropertyChangedCallback(new Observable.OnPropertyChangedCallback() {
+             @Override
+             public void onPropertyChanged(Observable sender, int propertyId) {
+-                if (viewModel.checkList.size()>0){
++                if (viewModel.checkList.size() > 0) {
+                     Intent intent = new Intent();
+-                    intent.putExtra("leftId",viewModel.leftId.get());
++                    intent.putExtra("leftId", viewModel.leftId.get());
+                     intent.putParcelableArrayListExtra("list", (ArrayList<? extends Parcelable>) viewModel.checkList);
+                     setResult(100, intent);
+                     finish();
+-                }else {
++                } else {
+                     ToastUtils.showLong("请批量选择数据");
+                 }
+             }
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\">\n\n    <uses-permission android:name=\"android.permission.INTERNET\" />\n    <uses-permission android:name=\"android.permission.CAMERA\" />\n    <uses-permission android:name=\"android.permission.READ_EXTERNAL_STORAGE\" /> <!-- 允许访问网络，必选权限 -->\n    <uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\" /> <!-- 允许获取网络状态，用于网络定位，若无gps但仍需实现定位小蓝点功能则此权限必选 -->\n    <uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\" /> <!-- 允许获取wifi网络信息，用于网络定位，若无gps但仍需实现定位小蓝点功能则此权限必选 -->\n    <uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\" /> <!-- 允许获取wifi状态改变，用于网络定位，若无gps但仍需实现定位小蓝点功能则此权限必选 -->\n    <uses-permission android:name=\"android.permission.CHANGE_WIFI_STATE\" /> <!-- 允许写入扩展存储，用于数据缓存，若无此权限则写到私有目录 -->\n    <uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" /> <!-- 允许写设备缓存，用于问题排查 -->\n    <uses-permission android:name=\"android.permission.WRITE_SETTINGS\" /> <!-- 允许读设备等信息，用于问题排查 -->\n    <uses-permission android:name=\"android.permission.MANAGE_EXTERNAL_STORAGE\" />\n    <uses-permission android:name=\"android.permission.RECORD_AUDIO\" />\n    <uses-permission android:name=\"android.permission.READ_EXTERNAL_STORAGE\" />\n    <uses-permission android:name=\"android.permission.CALL_PHONE\" /> <!-- 前台服务 -->\n    <uses-permission android:name=\"android.permission.CALL_PHONE\" />\n    <uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\" />\n    <uses-permission android:name=\"android.permission.READ_PHONE_STATE\" />\n    <!-- 前台服务-->\n    <uses-permission android:name=\"android.permission.FOREGROUND_SERVICE\" />\n    <uses-permission android:name=\"android.permission.RECEIVE_BOOT_COMPLETED\" />\n\n    <application\n        android:name=\".App\"\n        android:allowBackup=\"true\"\n        android:icon=\"@mipmap/ic_launcher\"\n        android:label=\"@string/app_name\"\n        android:requestLegacyExternalStorage=\"true\"\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\n        android:supportsRtl=\"true\"\n        android:theme=\"@style/Theme.Sunshinepay\">\n        <activity\n            android:name=\".ui.work.ui.activity.emergency_info.EmergencyInfoActivity\"\n            android:exported=\"false\" />\n        <activity\n            android:name=\".ui.im.activity.ImGroupActivity\"\n            android:exported=\"false\" />\n        <activity\n            android:name=\".ui.work.ui.activity.statistics_history.StatisticsHistoryActivity\"\n            android:exported=\"false\" />\n        <activity\n            android:name=\".ui.work.ui.activity.change_event.ChangeEventActivity\"\n            android:exported=\"false\" />\n        <activity\n            android:name=\".ui.work.ui.activity.task_report_details.TaskReportDetailsActivity\"\n            android:exported=\"false\" />\n        <activity\n            android:name=\".ui.work.ui.activity.task_edit_report.EditTaskReportActivity\"\n            android:exported=\"false\" />\n        <activity\n            android:name=\".ui.work.ui.activity.task_details.TaskDetailsActivity\"\n            android:exported=\"false\" />\n        <activity\n            android:name=\".ui.work.ui.activity.task_user.TaskUserActivity\"\n            android:exported=\"false\" />\n        <activity\n            android:name=\".ui.work.ui.activity.task_publish.TaskPublishActivity\"\n            android:exported=\"false\" />\n        <activity\n            android:name=\".ui.work.ui.activity.task_management.TaskManagementActivity\"\n            android:exported=\"false\" />\n        <activity\n            android:name=\".ui.work.ui.activity.infection.InfectionUserActivity\"\n            android:exported=\"false\" />\n        <activity\n            android:name=\".ui.work.ui.activity.report.ReportManagerActivity\"\n            android:exported=\"false\" />\n        <activity\n            android:name=\".ui.work.ui.activity.reassignment_member.ReassignmentMemberActivity\"\n            android:exported=\"false\" />\n        <activity\n            android:name=\".ui.work.ui.activity.member_details.MemberDetailsActivity\"\n            android:exported=\"false\" />\n\n        <service android:name=\"com.amap.api.location.APSService\" />\n        <service\n            android:name=\".service.ImService\"\n            android:enabled=\"true\"\n            android:exported=\"false\" />\n        <service\n            android:name=\".service.KeepAliveJobService\"\n            android:enabled=\"true\"\n            android:exported=\"true\"\n            android:permission=\"android.permission.BIND_JOB_SERVICE\" />\n\n        <activity\n            android:name=\".ui.im.activity.ChatActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"standard\"\n            android:screenOrientation=\"portrait\" />\n\n        <activity\n            android:name=\".ui.work.ui.activity.materials_manager.ApplyMaterialsActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"standard\"\n            android:screenOrientation=\"portrait\" />\n\n        <activity\n            android:name=\".ui.work.ui.activity.outbound_management.OutboundManagementActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"standard\"\n            android:screenOrientation=\"portrait\" />\n\n        <activity\n            android:name=\".ui.work.ui.activity.materials_manager.ApplyMaterialsMostActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"standard\"\n            android:screenOrientation=\"portrait\" />\n\n        <activity\n            android:name=\".ui.work.ui.activity.materials_manager.ApplyActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"standard\"\n            android:screenOrientation=\"portrait\" />\n\n        <activity\n            android:name=\".ui.work.ui.activity.materials_manager.MaterialsManagerActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"standard\"\n            android:screenOrientation=\"portrait\" />\n\n        <activity\n            android:name=\".ui.work.ui.activity.time_linea.TimeLineaActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"standard\"\n            android:screenOrientation=\"portrait\" />\n        <activity\n            android:name=\".ui.work.ui.activity.personnel_application.PersonnelApplicationAddActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"standard\"\n            android:screenOrientation=\"portrait\" />\n        <activity\n            android:name=\".ui.work.ui.activity.personnel_application.PersonnelApplicationActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"standard\"\n            android:screenOrientation=\"portrait\" />\n        <activity\n            android:name=\".ui.work.ui.activity.material.MaterialRequestDescActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"standard\"\n            android:screenOrientation=\"portrait\" />\n        <activity\n            android:name=\".ui.work.ui.activity.material.MaterialRequestActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"standard\"\n            android:screenOrientation=\"portrait\" />\n        <activity\n            android:name=\".ui.work.ui.activity.event_summary.EventSummaryActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"standard\"\n            android:screenOrientation=\"portrait\" />\n        <activity\n            android:name=\".ui.work.ui.activity.MapActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"standard\"\n            android:screenOrientation=\"portrait\" />\n        <activity\n            android:name=\".ui.work.ui.activity.event_list.EventListActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"standard\"\n            android:screenOrientation=\"portrait\" />\n        <activity\n            android:name=\"com.hwq.mvvmlibrary.base.ContainerActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"standard\"\n            android:screenOrientation=\"portrait\" />\n        <activity\n            android:name=\".ui.work.ui.activity.announcement.AnnouncementActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"standard\"\n            android:screenOrientation=\"portrait\" />\n\n        <meta-data\n            android:name=\"com.amap.api.v2.apikey\"\n            android:value=\"154953c5429d010dc6cb90f4f4755e06\" />\n\n        <activity\n            android:name=\".ui.work.ui.activity.muster_tags.MusterTagsActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"standard\"\n            android:screenOrientation=\"portrait\" />\n        <activity\n            android:name=\".ui.work.ui.activity.add_team_member.AddTeamMembersActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"standard\" />\n        <activity\n            android:name=\".ui.work.ui.activity.add_muster_group.AddMusterGroupActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"standard\"\n            android:screenOrientation=\"portrait\" />\n        <activity\n            android:name=\".ui.work.ui.activity.muster.MusterActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"standard\"\n            android:screenOrientation=\"portrait\" />\n        <activity\n            android:name=\".ui.work.ui.activity.patirent.PatientRegistrationAddActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"standard\"\n            android:screenOrientation=\"portrait\" />\n        <activity\n            android:name=\".ui.work.ui.activity.patirent.PatientRegistrationActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"standard\"\n            android:screenOrientation=\"portrait\" />\n        <activity\n            android:name=\".ui.work.ui.activity.casualty.CasualtyListActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"standard\"\n            android:screenOrientation=\"portrait\" />\n        <activity\n            android:name=\".ui.work.ui.activity.statistics.StatisticsActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"standard\" />\n        <activity\n            android:name=\".ui.home.MainActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"singleInstance\"\n            android:screenOrientation=\"portrait\" />\n        <activity\n            android:name=\".ui.login.LoginActivity\"\n            android:exported=\"true\"\n            android:label=\"@string/app_name\"\n            android:theme=\"@style/Theme.Sunshinepay\">\n            <intent-filter>\n                <action android:name=\"android.intent.action.MAIN\" />\n\n                <category android:name=\"android.intent.category.LAUNCHER\" />\n            </intent-filter>\n        </activity>\n        <activity\n            android:name=\".ui.work.ui.activity.knowledge.KnowledgeActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"standard\"\n            android:screenOrientation=\"portrait\" />\n        <activity\n            android:name=\".ui.work.ui.activity.knowledge_details.KnowledgeDetailsActivity\"\n            android:configChanges=\"orientation|screenSize|keyboardHidden\"\n            android:exported=\"false\"\n            android:launchMode=\"standard\"\n            android:screenOrientation=\"portrait\" />\n    </application>\n\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+--- a/app/src/main/AndroidManifest.xml	(revision 12c5f5a306376b62a57b5262690beaf670849515)
++++ b/app/src/main/AndroidManifest.xml	(date 1716967993032)
+@@ -98,6 +98,13 @@
+             android:launchMode="standard"
+             android:screenOrientation="portrait" />
+ 
++        <activity
++            android:name=".ui.work.ui.activity.requisition_outbound.RequisitionOutboundActivity"
++            android:configChanges="orientation|screenSize|keyboardHidden"
++            android:exported="false"
++            android:launchMode="standard"
++            android:screenOrientation="portrait" />
++
+         <activity
+             android:name=".ui.work.ui.activity.outbound_management.OutboundManagementActivity"
+             android:configChanges="orientation|screenSize|keyboardHidden"
+Index: app/src/main/res/layout/activity_outbound_management_desc_item.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n<layout xmlns:app=\"http://schemas.android.com/apk/res-auto\"\n    xmlns:tools=\"http://schemas.android.com/tools\">\n\n    <data>\n\n        <import type=\"com.hwq.mvvmlibrary.widget.time.TimeUtils\" />\n\n        <import type=\"com.hwq.mvvmlibrary.binding.adapter.LayoutManagers\" />\n\n        <variable\n            name=\"item\"\n            type=\"com.lib.emergency.rescue.ui.work.ui.activity.outbound_management.vm.OutboundManagementDescItemViewModel\" />\n    </data>\n\n    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\n        android:layout_width=\"match_parent\"\n        android:layout_height=\"wrap_content\"\n        android:layout_marginBottom=\"@dimen/dp_12\"\n        android:background=\"@drawable/bg_ffffff_8\">\n\n\n        <TextView\n            android:id=\"@+id/tvDg\"\n            android:layout_width=\"wrap_content\"\n            android:layout_height=\"wrap_content\"\n            android:layout_marginLeft=\"@dimen/dp_16\"\n            android:layout_marginTop=\"@dimen/dp_16\"\n            android:text=\"@{item.data.name}\"\n            android:textColor=\"#ff333333\"\n            android:textSize=\"16sp\"\n            app:layout_constraintLeft_toLeftOf=\"parent\"\n            app:layout_constraintTop_toTopOf=\"parent\"\n            tools:text=\"一次性导管\" />\n\n        <TextView\n            android:layout_width=\"wrap_content\"\n            android:layout_height=\"wrap_content\"\n            android:layout_marginTop=\"@dimen/dp_19\"\n            android:layout_marginRight=\"@dimen/dp_16\"\n            android:text=\"生活物资\"\n            android:textColor=\"#ff666666\"\n            android:textSize=\"12sp\"\n            app:layout_constraintRight_toRightOf=\"parent\"\n            app:layout_constraintTop_toTopOf=\"parent\" />\n\n\n        <View\n            android:id=\"@+id/vLine\"\n            android:layout_width=\"match_parent\"\n            android:layout_height=\"@dimen/dp_2\"\n            android:layout_marginLeft=\"@dimen/dp_16\"\n            android:layout_marginTop=\"@dimen/dp_16\"\n            android:layout_marginRight=\"@dimen/dp_16\"\n            android:background=\"@drawable/dash_line\"\n            android:layerType=\"software\"\n            app:layout_constraintLeft_toLeftOf=\"parent\"\n            app:layout_constraintRight_toRightOf=\"parent\"\n            app:layout_constraintTop_toBottomOf=\"@+id/tvDg\" />\n\n\n        <androidx.appcompat.widget.LinearLayoutCompat\n            android:id=\"@+id/ll1\"\n            android:layout_width=\"match_parent\"\n            android:layout_height=\"wrap_content\"\n            android:layout_marginLeft=\"@dimen/dp_16\"\n            android:layout_marginTop=\"@dimen/dp_16\"\n            android:layout_marginRight=\"@dimen/dp_16\"\n            android:gravity=\"center_vertical\"\n            android:orientation=\"horizontal\"\n            app:layout_constraintTop_toBottomOf=\"@+id/vLine\">\n\n            <TextView\n                android:layout_width=\"wrap_content\"\n                android:layout_height=\"wrap_content\"\n                android:text=\"规格：\"\n                android:textColor=\"#ff666666\"\n                android:textSize=\"12sp\" />\n\n            <TextView\n                android:layout_width=\"wrap_content\"\n                android:layout_height=\"wrap_content\"\n                android:text=\"@{item.data.specification}\"\n                android:textColor=\"#ff666666\"\n                android:textSize=\"12sp\" />\n        </androidx.appcompat.widget.LinearLayoutCompat>\n\n        <androidx.appcompat.widget.LinearLayoutCompat\n            android:id=\"@+id/ll2\"\n            android:layout_width=\"match_parent\"\n            android:layout_height=\"wrap_content\"\n            android:layout_marginLeft=\"@dimen/dp_16\"\n            android:layout_marginTop=\"@dimen/dp_6\"\n            android:layout_marginRight=\"@dimen/dp_16\"\n            android:gravity=\"center_vertical\"\n            android:orientation=\"horizontal\"\n            app:layout_constraintTop_toBottomOf=\"@+id/ll1\">\n\n            <TextView\n                android:layout_width=\"wrap_content\"\n                android:layout_height=\"wrap_content\"\n                android:text=\"型号：\"\n                android:textColor=\"#ff666666\"\n                android:textSize=\"12sp\" />\n\n            <TextView\n                android:layout_width=\"wrap_content\"\n                android:layout_height=\"wrap_content\"\n                android:text=\"@{item.data.materialName}\"\n                android:textColor=\"#ff666666\"\n                android:textSize=\"12sp\" />\n        </androidx.appcompat.widget.LinearLayoutCompat>\n\n        <androidx.appcompat.widget.LinearLayoutCompat\n            android:id=\"@+id/ll3\"\n            android:layout_width=\"match_parent\"\n            android:layout_height=\"wrap_content\"\n            android:layout_marginLeft=\"@dimen/dp_16\"\n            android:layout_marginTop=\"@dimen/dp_6\"\n            android:layout_marginRight=\"@dimen/dp_16\"\n            android:gravity=\"center_vertical\"\n            android:orientation=\"horizontal\"\n            app:layout_constraintTop_toBottomOf=\"@+id/ll2\">\n\n            <TextView\n                android:layout_width=\"wrap_content\"\n                android:layout_height=\"wrap_content\"\n                android:text=\"单位：\"\n                android:textColor=\"#ff666666\"\n                android:textSize=\"12sp\" />\n\n            <TextView\n                android:layout_width=\"wrap_content\"\n                android:layout_height=\"wrap_content\"\n                android:text=\"@{item.data.sku}\"\n                android:textColor=\"#ff666666\"\n                android:textSize=\"12sp\" />\n        </androidx.appcompat.widget.LinearLayoutCompat>\n\n        <androidx.appcompat.widget.LinearLayoutCompat\n            android:id=\"@+id/ll4\"\n            android:layout_width=\"match_parent\"\n            android:layout_height=\"wrap_content\"\n            android:layout_marginLeft=\"@dimen/dp_16\"\n            android:layout_marginTop=\"@dimen/dp_6\"\n            android:layout_marginRight=\"@dimen/dp_16\"\n            android:gravity=\"center_vertical\"\n            android:orientation=\"horizontal\"\n            app:layout_constraintTop_toBottomOf=\"@+id/ll3\">\n\n            <TextView\n                android:layout_width=\"wrap_content\"\n                android:layout_height=\"wrap_content\"\n                android:text=\"生产厂商：\"\n                android:textColor=\"#ff666666\"\n                android:textSize=\"12sp\" />\n\n            <TextView\n                android:layout_width=\"wrap_content\"\n                android:layout_height=\"wrap_content\"\n                android:text=\"@{item.data.manufacturer}\"\n                android:textColor=\"#ff666666\"\n                android:textSize=\"12sp\" />\n        </androidx.appcompat.widget.LinearLayoutCompat>\n\n        <androidx.appcompat.widget.LinearLayoutCompat\n            android:id=\"@+id/ll5\"\n            android:layout_width=\"match_parent\"\n            android:layout_height=\"wrap_content\"\n            android:layout_marginLeft=\"@dimen/dp_16\"\n            android:layout_marginTop=\"@dimen/dp_6\"\n            android:layout_marginRight=\"@dimen/dp_16\"\n            android:gravity=\"center_vertical\"\n            android:orientation=\"horizontal\"\n            app:layout_constraintTop_toBottomOf=\"@+id/ll4\">\n\n            <TextView\n                android:layout_width=\"wrap_content\"\n                android:layout_height=\"wrap_content\"\n                android:text=\"库存数量：\"\n                android:textColor=\"#ff666666\"\n                android:textSize=\"12sp\" />\n\n            <TextView\n                android:layout_width=\"wrap_content\"\n                android:layout_height=\"wrap_content\"\n                android:text='@{item.data.num}'\n                android:textColor=\"#ff666666\"\n                android:textSize=\"12sp\" />\n        </androidx.appcompat.widget.LinearLayoutCompat>\n\n        <androidx.appcompat.widget.LinearLayoutCompat\n            android:id=\"@+id/ll6\"\n            android:layout_width=\"match_parent\"\n            android:layout_height=\"wrap_content\"\n            android:layout_marginLeft=\"@dimen/dp_16\"\n            android:layout_marginTop=\"@dimen/dp_6\"\n            android:layout_marginRight=\"@dimen/dp_16\"\n            android:gravity=\"center_vertical\"\n            android:orientation=\"horizontal\"\n            app:layout_constraintTop_toBottomOf=\"@+id/ll5\">\n\n            <TextView\n                android:layout_width=\"wrap_content\"\n                android:layout_height=\"wrap_content\"\n                android:text=\"需求数量：\"\n                android:textColor=\"#ff666666\"\n                android:textSize=\"12sp\" />\n\n            <TextView\n                android:layout_width=\"wrap_content\"\n                android:layout_height=\"wrap_content\"\n                android:text=\"@{item.data.manufacturer}\"\n                android:textColor=\"#ff666666\"\n                android:textSize=\"12sp\" />\n        </androidx.appcompat.widget.LinearLayoutCompat>\n\n\n        <View\n            android:id=\"@+id/vLin2\"\n            android:layout_width=\"match_parent\"\n            android:layout_height=\"@dimen/dp_2\"\n            android:layout_marginLeft=\"@dimen/dp_16\"\n            android:layout_marginTop=\"@dimen/dp_16\"\n            android:layout_marginRight=\"@dimen/dp_16\"\n            android:background=\"@drawable/dash_line\"\n            android:layerType=\"software\"\n            app:layout_constraintLeft_toLeftOf=\"parent\"\n            app:layout_constraintRight_toRightOf=\"parent\"\n            app:layout_constraintTop_toBottomOf=\"@+id/ll6\" />\n\n        <TextView\n            android:id=\"@+id/tvNeed\"\n            android:layout_width=\"wrap_content\"\n            android:layout_height=\"wrap_content\"\n            android:layout_marginTop=\"@dimen/dp_12\"\n            android:layout_marginBottom=\"@dimen/dp_12\"\n            android:text='@{\"出库数量：\"+item.data.outNum}'\n            android:textColor=\"#ff333333\"\n            android:textSize=\"12sp\"\n            app:layout_constraintBottom_toBottomOf=\"parent\"\n            app:layout_constraintLeft_toLeftOf=\"@+id/vLin2\"\n            app:layout_constraintTop_toBottomOf=\"@id/vLin2\" />\n\n        <androidx.appcompat.widget.LinearLayoutCompat\n            android:layout_width=\"wrap_content\"\n            android:layout_height=\"@dimen/dp_40\"\n            android:layout_marginRight=\"@dimen/dp_16\"\n            android:background=\"@drawable/bg_hospital_15\"\n            android:gravity=\"center\"\n            app:layout_constraintBottom_toBottomOf=\"@+id/tvNeed\"\n            app:layout_constraintRight_toRightOf=\"parent\"\n            app:layout_constraintTop_toTopOf=\"@+id/tvNeed\">\n\n\n            <TextView\n                onClickCommand=\"@{item.itemClick(-1)}\"\n                android:layout_width=\"@dimen/dp_30\"\n                android:layout_height=\"@dimen/dp_30\"\n                android:layout_marginLeft=\"@dimen/dp_5\"\n                android:background=\"@drawable/bg_dcdcdc_15\"\n                android:gravity=\"center\"\n                android:paddingBottom=\"@dimen/dp_5\"\n                android:text=\"-\"\n                android:textColor=\"@color/white\"\n                android:textSize=\"@dimen/dp_20\"\n                app:isThrottleFirst=\"@{item.isThrottleFirst}\" />\n\n            <TextView\n                android:id=\"@+id/tvSelect\"\n                android:layout_width=\"wrap_content\"\n                android:layout_height=\"match_parent\"\n                android:layout_marginLeft=\"@dimen/dp_5\"\n                android:layout_marginRight=\"@dimen/dp_5\"\n                android:gravity=\"center\"\n                android:minWidth=\"@dimen/dp_20\"\n                android:textColor=\"#ff333333\"\n                android:textSize=\"14sp\"\n                app:text=\"@{item.countShow}\" />\n\n            <TextView\n                onClickCommand=\"@{item.itemClick(1)}\"\n                android:layout_width=\"@dimen/dp_30\"\n                android:layout_height=\"@dimen/dp_30\"\n                android:layout_marginRight=\"@dimen/dp_5\"\n                android:background=\"@drawable/bg_00b372_15\"\n                android:gravity=\"center\"\n                android:text=\"+\"\n                android:textColor=\"@color/white\"\n                android:textSize=\"@dimen/dp_20\"\n                app:isThrottleFirst=\"@{item.isThrottleFirst}\" />\n\n        </androidx.appcompat.widget.LinearLayoutCompat>\n\n    </androidx.constraintlayout.widget.ConstraintLayout>\n</layout>\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_outbound_management_desc_item.xml b/app/src/main/res/layout/activity_outbound_management_desc_item.xml
+--- a/app/src/main/res/layout/activity_outbound_management_desc_item.xml	(revision 12c5f5a306376b62a57b5262690beaf670849515)
++++ b/app/src/main/res/layout/activity_outbound_management_desc_item.xml	(date 1716975528216)
+@@ -184,7 +184,7 @@
+             <TextView
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+-                android:text='@{item.data.num}'
++                android:text='@{item.data.codeNum}'
+                 android:textColor="#ff666666"
+                 android:textSize="12sp" />
+         </androidx.appcompat.widget.LinearLayoutCompat>
+@@ -210,7 +210,7 @@
+             <TextView
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+-                android:text="@{item.data.manufacturer}"
++                android:text="@{item.data.num}"
+                 android:textColor="#ff666666"
+                 android:textSize="12sp" />
+         </androidx.appcompat.widget.LinearLayoutCompat>
+Index: app/src/main/java/com/lib/emergency/rescue/data/http/result/ApplyByIdResult.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.lib.emergency.rescue.data.http.result;\n\nimport java.util.List;\n\npublic class ApplyByIdResult {\n\n\n    public List<ApplyListDTO> applyList;\n    public String eventId;\n    public int type;\n    public int regulationNum;\n    public int num;\n\n    public static class ApplyListDTO {\n        public String materialNo;\n        public String materialName;\n        public String catalogId;\n        public String catalogName;\n        public String name;\n        public String manufacturer;\n        public int outNum;\n        public int num;\n        public String specification;\n        public String sku;\n        public int applyNum;\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/lib/emergency/rescue/data/http/result/ApplyByIdResult.java b/app/src/main/java/com/lib/emergency/rescue/data/http/result/ApplyByIdResult.java
+--- a/app/src/main/java/com/lib/emergency/rescue/data/http/result/ApplyByIdResult.java	(revision 12c5f5a306376b62a57b5262690beaf670849515)
++++ b/app/src/main/java/com/lib/emergency/rescue/data/http/result/ApplyByIdResult.java	(date 1716975528210)
+@@ -19,6 +19,7 @@
+         public String name;
+         public String manufacturer;
+         public int outNum;
++        public int codeNum;
+         public int num;
+         public String specification;
+         public String sku;
+Index: app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/requisition_outbound/vm/RequisitionOutboundViewModel.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/requisition_outbound/vm/RequisitionOutboundViewModel.java b/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/requisition_outbound/vm/RequisitionOutboundViewModel.java
+new file mode 100644
+--- /dev/null	(date 1716975237802)
++++ b/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/requisition_outbound/vm/RequisitionOutboundViewModel.java	(date 1716975237802)
+@@ -0,0 +1,105 @@
++package com.lib.emergency.rescue.ui.work.ui.activity.requisition_outbound.vm;
++
++import android.app.Application;
++
++import androidx.annotation.NonNull;
++import androidx.databinding.ObservableField;
++
++import com.hwq.mvvmlibrary.base.BaseViewModel;
++import com.hwq.mvvmlibrary.binding.command.BindingAction;
++import com.hwq.mvvmlibrary.binding.command.BindingCommand;
++import com.hwq.mvvmlibrary.http.BaseResponse;
++import com.hwq.mvvmlibrary.http.ResponseThrowable;
++import com.hwq.mvvmlibrary.utils.RxUtils;
++import com.hwq.mvvmlibrary.utils.ToastUtils;
++import com.lib.emergency.rescue.App;
++import com.lib.emergency.rescue.data.Repository;
++import com.lib.emergency.rescue.data.http.BaseResult;
++import com.lib.emergency.rescue.data.http.result.QueryEmergencyListResult;
++import com.lib.emergency.rescue.data.http.result.QueryEmergencyTeamResult;
++import com.lib.emergency.rescue.data.http.result.QueryOutListResult;
++import com.lib.emergency.rescue.router.Router;
++import com.lib.emergency.rescue.router.RouterPath;
++import com.lib.emergency.rescue.ui.work.event.DictionaryEvent;
++import com.lib.emergency.rescue.ui.work.ui.activity.outbound_management.vm.OutboundManagementItemViewModel;
++import com.lib.emergency.rescue.ui.work.ui.activity.outbound_management.vm.OutboundManagementViewModel;
++import com.lib.emergency.rescue.ui.work.ui.fragment.patientRegistration.manager.PatientRegistrationAddDataManager;
++import com.lib.emergency.rescue.view.dialog.WheelViewDialog;
++
++import java.util.ArrayList;
++import java.util.HashMap;
++import java.util.List;
++import java.util.Map;
++import java.util.function.Consumer;
++
++import io.reactivex.Observable;
++
++public class RequisitionOutboundViewModel extends BaseViewModel<Repository> {
++    public RequisitionOutboundViewModel(@NonNull Application application, Repository model) {
++        super(application, model);
++    }
++
++    public ObservableField<QueryEmergencyListResult> data = new ObservableField<>();
++
++    public List<QueryEmergencyTeamResult> list = new ArrayList<>();
++
++    public void initData() {
++        Observable<BaseResponse<List<QueryEmergencyTeamResult>>> queryEmergencyList = model.queryEmergencyTeam(data.get().id);
++        queryEmergencyList.compose(RxUtils.schedulersTransformer()) //线程调度
++                .compose(RxUtils.exceptionTransformer()).doOnSubscribe(this).subscribe(new BaseResult<BaseResponse<List<QueryEmergencyTeamResult>>>() {
++                    @Override
++                    public void onError(ResponseThrowable e) {
++
++                    }
++
++                    @Override
++                    public void onSuccessData(BaseResponse<List<QueryEmergencyTeamResult>> result) {
++                        list.clear();
++                        list.addAll(result.data);
++                    }
++                });
++
++    }
++
++    public BindingCommand choseEmergencyTeamClick = new BindingCommand(new BindingAction() {
++        @Override
++        public void call() {
++            chose();
++        }
++    });
++
++    public ObservableField<String> id = new ObservableField<>("");
++    public ObservableField<String> idValue = new ObservableField<>("");
++    public ObservableField<String> name = new ObservableField<>("");
++    public ObservableField<String> tel = new ObservableField<>("");
++
++    public BindingCommand save = new BindingCommand(new BindingAction() {
++        @Override
++        public void call() {
++            if (id.get().isEmpty()) {
++                ToastUtils.showLong("请选择队员");
++                return;
++            }
++            if (name.get().isEmpty()) {
++                ToastUtils.showLong("请输入联系人");
++                return;
++            }
++            if (tel.get().isEmpty()) {
++                ToastUtils.showLong("请输入联系电话");
++                return;
++            }
++
++            Router.getInstance().build(RouterPath.HOME.ROUTER_APPLY).putString("receiveName", idValue.get()).putString("tel", tel.get()).putString("name", name.get()).putString("id", id.get()).putInt("type", 2).navigation();
++        }
++    });
++
++    public void chose() {
++        List<String> data = new ArrayList<>();
++        list.forEach(queryEmergencyTeamResult -> data.add(queryEmergencyTeamResult.userName));
++        new WheelViewDialog.Builder(App.getTopActivityInstance()).setTips("请选择睁眼反应").setList(data).setListener((dialog, position, o) -> {
++            id.set(list.get(position).id);
++            idValue.set(list.get(position).userName);
++            //
++        }).show();
++    }
++}
+Index: app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/vm/MaterialsManagerItemViewModel.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.lib.emergency.rescue.ui.work.ui.activity.materials_manager.vm;\n\nimport androidx.annotation.NonNull;\nimport androidx.databinding.ObservableField;\n\nimport com.hwq.mvvmlibrary.base.ItemViewModel;\nimport com.hwq.mvvmlibrary.binding.command.BindingAction;\nimport com.hwq.mvvmlibrary.binding.command.BindingCommand;\nimport com.lib.emergency.rescue.data.http.result.MenuResult;\nimport com.lib.emergency.rescue.data.http.result.QueryEmergencyListResult;\nimport com.lib.emergency.rescue.router.Router;\nimport com.lib.emergency.rescue.ui.work.ui.WorkViewModel;\n\npublic class MaterialsManagerItemViewModel extends ItemViewModel<MaterialsManagerViewModel> {\n    public MaterialsManagerItemViewModel(@NonNull MaterialsManagerViewModel viewModel) {\n        super(viewModel);\n    }\n\n    public ObservableField<MenuResult> data;\n\n    public BindingCommand itemClick = new BindingCommand(new BindingAction() {\n        @Override\n        public void call() {\n            Router.getInstance().build(data.get().path).putSerializable(QueryEmergencyListResult.class.getCanonicalName(), viewModel.data.get()).navigation();\n        }\n    });\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/vm/MaterialsManagerItemViewModel.java b/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/vm/MaterialsManagerItemViewModel.java
+--- a/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/vm/MaterialsManagerItemViewModel.java	(revision 12c5f5a306376b62a57b5262690beaf670849515)
++++ b/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/vm/MaterialsManagerItemViewModel.java	(date 1716969692864)
+@@ -21,7 +21,8 @@
+     public BindingCommand itemClick = new BindingCommand(new BindingAction() {
+         @Override
+         public void call() {
+-            Router.getInstance().build(data.get().path).putSerializable(QueryEmergencyListResult.class.getCanonicalName(), viewModel.data.get()).navigation();
++            Router.getInstance()
++                    .build(data.get().path).putSerializable(QueryEmergencyListResult.class.getCanonicalName(), viewModel.data.get()).navigation();
+         }
+     });
+ }
+Index: app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/vm/MaterialsManagerViewModel.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.lib.emergency.rescue.ui.work.ui.activity.materials_manager.vm;\n\nimport android.app.Application;\n\nimport androidx.annotation.NonNull;\nimport androidx.databinding.ObservableArrayList;\nimport androidx.databinding.ObservableField;\nimport androidx.databinding.ObservableList;\n\nimport com.hwq.mvvmlibrary.base.BaseViewModel;\nimport com.hwq.mvvmlibrary.binding.adapter.ItemBinding;\nimport com.hwq.mvvmlibrary.http.BaseResponse;\nimport com.hwq.mvvmlibrary.http.ResponseThrowable;\nimport com.hwq.mvvmlibrary.utils.KLog;\nimport com.hwq.mvvmlibrary.utils.RxUtils;\nimport com.lib.emergency.rescue.BR;\nimport com.lib.emergency.rescue.BuildConfig;\nimport com.lib.emergency.rescue.R;\nimport com.lib.emergency.rescue.data.Repository;\nimport com.lib.emergency.rescue.data.http.BaseResult;\nimport com.lib.emergency.rescue.data.http.result.MenuResult;\nimport com.lib.emergency.rescue.data.http.result.QueryEmergencyListResult;\nimport com.lib.emergency.rescue.data.http.result.SysUserSexResult;\nimport com.lib.emergency.rescue.ui.work.event.DictionaryEvent;\nimport com.lib.emergency.rescue.ui.work.ui.WorkItemViewModel;\nimport com.lib.emergency.rescue.ui.work.ui.WorkViewModel;\nimport com.lib.emergency.rescue.ui.work.ui.activity.materials_manager.event.MaterialsManagerEvent;\n\nimport java.util.HashMap;\nimport java.util.List;\nimport java.util.Map;\n\nimport io.reactivex.Observable;\nimport io.reactivex.Observer;\nimport io.reactivex.disposables.Disposable;\nimport io.reactivex.functions.BiFunction;\n\npublic class MaterialsManagerViewModel extends BaseViewModel<Repository> {\n\n    public MaterialsManagerViewModel(@NonNull Application application, Repository model) {\n        super(application, model);\n    }\n\n    //给RecyclerView添加items\n    public ObservableList<MaterialsManagerItemViewModel> observableList = new ObservableArrayList<>();\n    //给RecyclerView添加ItemBinding\n    public ItemBinding<MaterialsManagerItemViewModel> itemBinding = ItemBinding.of(BR.item, R.layout.activity_materials_manager_item);\n\n    public ObservableField<QueryEmergencyListResult> data = new ObservableField<>();\n\n    public void initData() {\n        Map<String, Object> prams = new HashMap<>();\n        Observable<BaseResponse<List<QueryEmergencyListResult>>> queryEmergencyList = model.queryEmergencyList(prams);\n        queryEmergencyList.compose(RxUtils.schedulersTransformer()) //线程调度\n                .compose(RxUtils.exceptionTransformer()).doOnSubscribe(this).subscribe(new BaseResult<BaseResponse<List<QueryEmergencyListResult>>>() {\n\n                    @Override\n                    public void onError(ResponseThrowable e) {\n\n                    }\n\n                    @Override\n                    public void onSuccess(BaseResponse<List<QueryEmergencyListResult>> result) {\n\n                    }\n\n                    @Override\n                    public void onSuccessData(BaseResponse<List<QueryEmergencyListResult>> result) {\n                        QueryEmergencyListResult queryEmergencyListResult = result.data.get(0);\n                        data.set(queryEmergencyListResult);\n                        KLog.e(queryEmergencyListResult);\n                        model.setWarehouseId(queryEmergencyListResult.warehouseId);\n                    }\n                });\n\n        Observable<BaseResponse<List<MenuResult>>> menu = model.getMenu(model.findByUser(model.getAccount()).userId, BuildConfig.systemId);\n        menu.compose(RxUtils.schedulersTransformer()) //线程调度\n                .compose(RxUtils.exceptionTransformer()).doOnSubscribe(this).subscribe(new BaseResult<BaseResponse<List<MenuResult>>>() {\n\n                    @Override\n                    public void onError(ResponseThrowable e) {\n\n                    }\n\n                    @Override\n                    public void onSuccess(BaseResponse<List<MenuResult>> result) {\n\n                    }\n\n                    @Override\n                    public void onSuccessData(BaseResponse<List<MenuResult>> result) {\n                        //列表数据\n                        List<MenuResult> menuResults = result.data;\n\n                        if (menuResults.size() >= 15) {\n                            for (int i = 9; i < menuResults.size(); i++) {\n                                MaterialsManagerItemViewModel viewModel = new MaterialsManagerItemViewModel(MaterialsManagerViewModel.this);\n                                viewModel.data = new ObservableField<>(menuResults.get(i));\n                                observableList.add(viewModel);\n                            }\n                        } else {\n                            for (int i = 0; i < menuResults.size(); i++) {\n                                MaterialsManagerItemViewModel viewModel = new MaterialsManagerItemViewModel(MaterialsManagerViewModel.this);\n                                viewModel.data = new ObservableField<>(menuResults.get(i));\n                                observableList.add(viewModel);\n                            }\n                        }\n\n                    }\n                });\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/vm/MaterialsManagerViewModel.java b/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/vm/MaterialsManagerViewModel.java
+--- a/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/vm/MaterialsManagerViewModel.java	(revision 12c5f5a306376b62a57b5262690beaf670849515)
++++ b/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/vm/MaterialsManagerViewModel.java	(date 1716971824286)
+@@ -105,7 +105,6 @@
+                                 observableList.add(viewModel);
+                             }
+                         }
+-
+                     }
+                 });
+     }
+Index: app/src/main/java/com/lib/emergency/rescue/router/RouterPath.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.lib.emergency.rescue.router;\n\npublic class RouterPath {\n    public static final String ROUTER_LOGIN = \"/pages/index/login\";\n\n    public static class HOME {\n        public static final String ROUTER_LOGIN = \"/pages/index/login\";\n        public static final String ROUTER_TIME_LINE = \"/pages/work/timeline\";\n        public static final String ROUTER_EVENT_SUMMARY = \"/pages/work/EventSummaryActivity\";\n        public static final String ROUTER_APPLICATION = \"/pages/index/application/index\";\n        public static final String ROUTER_MATERIAL = \"/pages/index/material/index\";\n        public static final String ROUTER_CHAT = \"/pages/index/im/ChatActivity\";\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/lib/emergency/rescue/router/RouterPath.java b/app/src/main/java/com/lib/emergency/rescue/router/RouterPath.java
+--- a/app/src/main/java/com/lib/emergency/rescue/router/RouterPath.java	(revision 12c5f5a306376b62a57b5262690beaf670849515)
++++ b/app/src/main/java/com/lib/emergency/rescue/router/RouterPath.java	(date 1716972580376)
+@@ -10,5 +10,6 @@
+         public static final String ROUTER_APPLICATION = "/pages/index/application/index";
+         public static final String ROUTER_MATERIAL = "/pages/index/material/index";
+         public static final String ROUTER_CHAT = "/pages/index/im/ChatActivity";
++        public static final String ROUTER_APPLY = "/pages/index/material/withdrawal/ApplyMaterialsActivity";
+     }
+ }
+Index: app/src/main/java/com/lib/emergency/rescue/router/Router.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.lib.emergency.rescue.router;\n\nimport android.content.Context;\nimport android.content.Intent;\nimport android.os.Bundle;\nimport android.os.Parcelable;\n\nimport com.hwq.mvvmlibrary.utils.KLog;\nimport com.hwq.mvvmlibrary.utils.ToastUtils;\nimport com.lib.emergency.rescue.App;\nimport com.lib.emergency.rescue.ui.im.activity.ChatActivity;\nimport com.lib.emergency.rescue.ui.login.LoginActivity;\nimport com.lib.emergency.rescue.ui.work.ui.activity.casualty.CasualtyListActivity;\nimport com.lib.emergency.rescue.ui.work.ui.activity.event_list.EventListActivity;\nimport com.lib.emergency.rescue.ui.work.ui.activity.event_summary.EventSummaryActivity;\nimport com.lib.emergency.rescue.ui.work.ui.activity.material.MaterialRequestActivity;\nimport com.lib.emergency.rescue.ui.work.ui.activity.materials_manager.ApplyActivity;\nimport com.lib.emergency.rescue.ui.work.ui.activity.materials_manager.MaterialsManagerActivity;\nimport com.lib.emergency.rescue.ui.work.ui.activity.outbound_management.OutboundManagementActivity;\nimport com.lib.emergency.rescue.ui.work.ui.activity.patirent.PatientRegistrationActivity;\nimport com.lib.emergency.rescue.ui.work.ui.activity.personnel_application.PersonnelApplicationActivity;\nimport com.lib.emergency.rescue.ui.work.ui.activity.task_management.TaskManagementActivity;\nimport com.lib.emergency.rescue.ui.work.ui.activity.time_linea.TimeLineaActivity;\nimport com.lib.emergency.rescue.ui.work.ui.activity.knowledge.KnowledgeActivity;\nimport com.lib.emergency.rescue.ui.work.ui.activity.statistics.StatisticsActivity;\nimport com.lib.emergency.rescue.ui.work.ui.activity.muster.MusterActivity;\nimport com.lib.emergency.rescue.ui.work.ui.activity.report.ReportManagerActivity;\n\nimport org.jetbrains.annotations.NotNull;\n\nimport java.io.Serializable;\nimport java.util.HashMap;\nimport java.util.Map;\n\npublic class Router {\n\n    public static String BUNDLE = Router.class.getName();\n    private static Router router;\n\n    private Map<String, Class> routers = new HashMap<>();\n    {\n        routers.put(\"/pages/index/material/outboundManagement\", OutboundManagementActivity.class);\n        routers.put(\"/pages/index/material/materialApplication\", ApplyActivity.class);\n        routers.put(\"/pages/index/material/frist\", MaterialsManagerActivity.class);\n        routers.put(\"/pages/index/management/management\", PatientRegistrationActivity.class);\n        routers.put(RouterPath.ROUTER_LOGIN, LoginActivity.class);\n        routers.put(RouterPath.HOME.ROUTER_TIME_LINE, TimeLineaActivity.class);\n        routers.put(RouterPath.HOME.ROUTER_EVENT_SUMMARY, EventSummaryActivity.class);\n        routers.put(RouterPath.HOME.ROUTER_MATERIAL, MaterialRequestActivity.class);\n        routers.put(RouterPath.HOME.ROUTER_APPLICATION, PersonnelApplicationActivity.class);\n        routers.put(RouterPath.HOME.ROUTER_CHAT, ChatActivity.class);\n        routers.put(\"/pages/index/muster/muster\", MusterActivity.class);\n        routers.put(\"/pages/index/register/register\", ReportManagerActivity.class);\n        routers.put(\"/pages/index/TheWounded/TheWounded\", CasualtyListActivity.class);\n        routers.put(\"/pages/index/event/event\", EventListActivity.class);\n        routers.put(\"/pages/index/DataStatistics/DataStatistics\", StatisticsActivity.class);\n        routers.put(\"/pages/index/knowledge/index\", KnowledgeActivity.class);\n        routers.put(\"/pages/index/task/taskManagement/index\", TaskManagementActivity.class);\n        routers.put(\"/pages/index/task/taskList/index\", TaskManagementActivity.class);\n    }\n\n    private Router() {\n\n    }\n\n    public static Router getInstance() {\n        if (router == null) {\n            router = new Router();\n        }\n        return router;\n    }\n\n    private String path;\n\n    public Router build(@NotNull String path) {\n        this.path = path;\n        return this;\n    }\n\n\n    public void navigation() {\n        Context context = App.getInstance();\n        if (context == null) return;\n\n        Class aClass = routers.get(path);\n        if (aClass == null) {\n            String msg = \"Current route does not exist.【\" + path + \"】\";\n            ToastUtils.showLong(msg);\n            KLog.e(msg);\n            return;\n//            throw new RouteNotFoundException(\"Current route does not exist.【\" + path + \"】\");\n        }\n        //跳转路由\n        Intent intent = new Intent(context, aClass);\n        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);\n        intent.putExtra(BUNDLE, bundle);\n        context.startActivity(intent);\n    }\n\n    Bundle bundle = new Bundle();\n\n    public Router putString(String key, String value) {\n        bundle.putString(key, value);\n        return this;\n    }\n\n    public Router putInt(String key, int value) {\n        bundle.putInt(key, value);\n        return this;\n    }\n\n    public Router putParcelable(String key, Parcelable value) {\n        bundle.putParcelable(key, value);\n        return this;\n    }\n\n    public Router putSerializable(String key, Serializable value) {\n        bundle.putSerializable(key, value);\n        return this;\n    }\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/lib/emergency/rescue/router/Router.java b/app/src/main/java/com/lib/emergency/rescue/router/Router.java
+--- a/app/src/main/java/com/lib/emergency/rescue/router/Router.java	(revision 12c5f5a306376b62a57b5262690beaf670849515)
++++ b/app/src/main/java/com/lib/emergency/rescue/router/Router.java	(date 1716972580374)
+@@ -15,10 +15,12 @@
+ import com.lib.emergency.rescue.ui.work.ui.activity.event_summary.EventSummaryActivity;
+ import com.lib.emergency.rescue.ui.work.ui.activity.material.MaterialRequestActivity;
+ import com.lib.emergency.rescue.ui.work.ui.activity.materials_manager.ApplyActivity;
++import com.lib.emergency.rescue.ui.work.ui.activity.materials_manager.ApplyMaterialsActivity;
+ import com.lib.emergency.rescue.ui.work.ui.activity.materials_manager.MaterialsManagerActivity;
+ import com.lib.emergency.rescue.ui.work.ui.activity.outbound_management.OutboundManagementActivity;
+ import com.lib.emergency.rescue.ui.work.ui.activity.patirent.PatientRegistrationActivity;
+ import com.lib.emergency.rescue.ui.work.ui.activity.personnel_application.PersonnelApplicationActivity;
++import com.lib.emergency.rescue.ui.work.ui.activity.requisition_outbound.RequisitionOutboundActivity;
+ import com.lib.emergency.rescue.ui.work.ui.activity.task_management.TaskManagementActivity;
+ import com.lib.emergency.rescue.ui.work.ui.activity.time_linea.TimeLineaActivity;
+ import com.lib.emergency.rescue.ui.work.ui.activity.knowledge.KnowledgeActivity;
+@@ -38,7 +40,10 @@
+     private static Router router;
+ 
+     private Map<String, Class> routers = new HashMap<>();
++
+     {
++        routers.put(RouterPath.HOME.ROUTER_APPLY, ApplyMaterialsActivity.class);
++        routers.put("/pages/index/material/withdrawal", RequisitionOutboundActivity.class);
+         routers.put("/pages/index/material/outboundManagement", OutboundManagementActivity.class);
+         routers.put("/pages/index/material/materialApplication", ApplyActivity.class);
+         routers.put("/pages/index/material/frist", MaterialsManagerActivity.class);
+@@ -93,6 +98,7 @@
+         //跳转路由
+         Intent intent = new Intent(context, aClass);
+         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
++        intent.putExtra("path", path);
+         intent.putExtra(BUNDLE, bundle);
+         context.startActivity(intent);
+     }
+Index: app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/requisition_outbound/RequisitionOutboundActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/requisition_outbound/RequisitionOutboundActivity.java b/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/requisition_outbound/RequisitionOutboundActivity.java
+new file mode 100644
+--- /dev/null	(date 1716972766281)
++++ b/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/requisition_outbound/RequisitionOutboundActivity.java	(date 1716972766281)
+@@ -0,0 +1,43 @@
++package com.lib.emergency.rescue.ui.work.ui.activity.requisition_outbound;
++
++import android.os.Bundle;
++
++import com.hwq.mvvmlibrary.base.BaseActivity;
++import com.hwq.mvvmlibrary.utils.KLog;
++import com.lib.emergency.rescue.BR;
++import com.lib.emergency.rescue.R;
++import com.lib.emergency.rescue.data.Injection;
++import com.lib.emergency.rescue.data.http.result.QueryEmergencyListResult;
++import com.lib.emergency.rescue.databinding.ActivityRequisitionOutboundBinding;
++import com.lib.emergency.rescue.router.Router;
++import com.lib.emergency.rescue.ui.work.ui.activity.requisition_outbound.vm.RequisitionOutboundViewModel;
++
++/**
++ * 领用出库
++ */
++public class RequisitionOutboundActivity extends BaseActivity<ActivityRequisitionOutboundBinding, RequisitionOutboundViewModel> {
++
++    @Override
++    public int initContentView(Bundle savedInstanceState) {
++        return R.layout.activity_requisition_outbound;
++    }
++
++    @Override
++    public int initVariableId() {
++        return BR.viewModel;
++    }
++
++    @Override
++    public RequisitionOutboundViewModel initViewModel() {
++        return new RequisitionOutboundViewModel(getApplication(), Injection.provideDemoRepository(this));
++    }
++
++    @Override
++    public void initData() {
++        viewModel.titleViewModel.titleText.set("领用出库");
++        Bundle bundleExtra = getIntent().getBundleExtra(Router.BUNDLE);
++        QueryEmergencyListResult data = (QueryEmergencyListResult) bundleExtra.getSerializable(QueryEmergencyListResult.class.getCanonicalName());
++        viewModel.data.set(data);
++        viewModel.initData();
++    }
++}
+Index: app/src/main/res/layout/activity_requisition_outbound.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_requisition_outbound.xml b/app/src/main/res/layout/activity_requisition_outbound.xml
+new file mode 100644
+--- /dev/null	(date 1716972801695)
++++ b/app/src/main/res/layout/activity_requisition_outbound.xml	(date 1716972801695)
+@@ -0,0 +1,177 @@
++<?xml version="1.0" encoding="utf-8"?>
++<layout xmlns:app="http://schemas.android.com/apk/res-auto">
++
++    <data>
++
++        <variable
++            name="viewModel"
++            type="com.lib.emergency.rescue.ui.work.ui.activity.requisition_outbound.vm.RequisitionOutboundViewModel" />
++    </data>
++
++    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"
++        android:background="@color/back_ground">
++
++        <include
++            android:id="@+id/toolbar"
++            layout="@layout/layout_toolbar"
++            app:titleViewModel="@{viewModel.titleViewModel}" />
++
++        <LinearLayout
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginLeft="@dimen/dp_16"
++            android:layout_marginTop="@dimen/dp_15"
++            android:layout_marginRight="@dimen/dp_16"
++            android:background="@drawable/bg_ffffff_8"
++            android:minHeight="@dimen/dp_200"
++            android:orientation="vertical"
++            app:layout_constraintTop_toBottomOf="@+id/toolbar">
++
++
++            <LinearLayout
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content"
++                android:layout_marginLeft="@dimen/dp_16"
++                android:layout_marginTop="@dimen/dp_16"
++                android:gravity="center"
++                android:orientation="horizontal">
++
++                <TextView
++                    android:layout_width="wrap_content"
++                    android:layout_height="wrap_content"
++                    android:text="接收对象:"
++                    android:textColor="#ff333333"
++                    android:textSize="12sp" />
++
++                <TextView
++                    android:layout_width="wrap_content"
++                    android:layout_height="wrap_content"
++                    android:gravity="center"
++                    android:text="*"
++                    android:textColor="#FF4F28"
++                    android:textSize="12sp" />
++            </LinearLayout>
++
++            <TextView
++                onClickCommand="@{viewModel.choseEmergencyTeamClick}"
++                android:layout_width="match_parent"
++                android:layout_height="@dimen/dp_40"
++                android:layout_marginLeft="@dimen/dp_16"
++                android:layout_marginTop="@dimen/dp_4"
++                android:layout_marginRight="@dimen/dp_16"
++                android:background="@drawable/bg_f1f2f5_8"
++                android:drawableRight="@drawable/baseline_keyboard_arrow_down_24"
++                android:gravity="center"
++                android:hint="请选择队员"
++                android:paddingRight="@dimen/dp_16"
++                android:text="@{viewModel.idValue}" />
++
++            <LinearLayout
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content"
++                android:layout_marginLeft="@dimen/dp_16"
++                android:layout_marginTop="@dimen/dp_16"
++                android:gravity="center"
++                android:orientation="horizontal">
++
++                <TextView
++                    android:layout_width="wrap_content"
++                    android:layout_height="wrap_content"
++                    android:text="联系人:"
++                    android:textColor="#ff333333"
++                    android:textSize="12sp" />
++
++                <TextView
++                    android:layout_width="wrap_content"
++                    android:layout_height="wrap_content"
++                    android:gravity="center"
++                    android:text="*"
++                    android:textColor="#FF4F28"
++                    android:textSize="12sp" />
++            </LinearLayout>
++
++            <EditText
++                android:layout_width="match_parent"
++                android:layout_height="@dimen/dp_40"
++                android:layout_marginLeft="@dimen/dp_16"
++                android:layout_marginTop="@dimen/dp_4"
++                android:layout_marginRight="@dimen/dp_16"
++                android:background="@drawable/bg_f1f2f5_8"
++                android:drawableRight="@drawable/baseline_keyboard_arrow_down_24"
++                android:gravity="center"
++                android:hint="请输入"
++                android:paddingRight="@dimen/dp_16"
++                android:text="@={viewModel.name}" />
++
++            <LinearLayout
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content"
++                android:layout_marginLeft="@dimen/dp_16"
++                android:layout_marginTop="@dimen/dp_16"
++                android:gravity="center"
++                android:orientation="horizontal">
++
++                <TextView
++                    android:layout_width="wrap_content"
++                    android:layout_height="wrap_content"
++                    android:text="联系方式:"
++                    android:textColor="#ff333333"
++                    android:textSize="12sp" />
++
++                <TextView
++                    android:layout_width="wrap_content"
++                    android:layout_height="wrap_content"
++                    android:gravity="center"
++                    android:text="*"
++                    android:textColor="#FF4F28"
++                    android:textSize="12sp" />
++            </LinearLayout>
++
++            <EditText
++                android:layout_width="match_parent"
++                android:layout_height="@dimen/dp_40"
++                android:layout_marginLeft="@dimen/dp_16"
++                android:layout_marginTop="@dimen/dp_4"
++                android:layout_marginRight="@dimen/dp_16"
++                android:layout_marginBottom="@dimen/dp_16"
++                android:background="@drawable/bg_f1f2f5_8"
++                android:drawableRight="@drawable/baseline_keyboard_arrow_down_24"
++                android:gravity="center"
++                android:hint="请输入"
++                android:inputType="phone"
++                android:maxLength="11"
++                android:paddingRight="@dimen/dp_16"
++                android:text="@={viewModel.tel}" />
++
++
++        </LinearLayout>
++
++
++        <LinearLayout
++            android:layout_width="match_parent"
++            android:layout_height="@dimen/dp_72"
++            android:background="@color/white"
++            android:gravity="center"
++            app:layout_constraintBottom_toBottomOf="parent">
++
++
++            <TextView
++                onClickCommand="@{viewModel.save}"
++                android:layout_width="match_parent"
++                android:layout_height="@dimen/dp_48"
++                android:layout_marginLeft="@dimen/dp_30"
++                android:layout_marginRight="@dimen/dp_30"
++                android:background="@drawable/bg_00b372_8"
++                android:gravity="center"
++                android:text="确定"
++                android:textColor="@color/white"
++                android:textSize="@dimen/sp_18" />
++
++
++        </LinearLayout>
++
++
++    </androidx.constraintlayout.widget.ConstraintLayout>
++</layout>
+Index: app/src/main/res/layout/activity_materials_manager.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n<layout xmlns:app=\"http://schemas.android.com/apk/res-auto\">\n\n    <data>\n\n        <import type=\"com.hwq.mvvmlibrary.binding.adapter.LayoutManagers\" />\n\n\n        <variable\n            name=\"viewModel\"\n            type=\"com.lib.emergency.rescue.ui.work.ui.activity.materials_manager.vm.MaterialsManagerViewModel\" />\n    </data>\n\n    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\n        android:layout_width=\"match_parent\"\n        android:layout_height=\"match_parent\">\n\n        <TextView\n            android:layout_marginRight=\"@dimen/dp_16\"\n            android:id=\"@+id/tvTitle\"\n            app:layout_constraintRight_toRightOf=\"parent\"\n            android:layout_width=\"match_parent\"\n            android:layout_height=\"wrap_content\"\n            android:layout_marginLeft=\"@dimen/dp_16\"\n            android:paddingTop=\"@dimen/dp_28\"\n            android:text=\"@{viewModel.data.reportUnit}\"\n            android:textColor=\"#ff999999\"\n            android:textSize=\"16sp\"\n            app:layout_constraintLeft_toLeftOf=\"parent\"\n            app:layout_constraintTop_toTopOf=\"parent\" />\n\n        <TextView\n            android:drawablePadding=\"@dimen/dp_0_5\"\n            android:drawableRight=\"@mipmap/ic_right_black\"\n            app:layout_constraintRight_toRightOf=\"parent\"\n            android:layout_marginRight=\"@dimen/dp_16\"\n            android:layout_marginLeft=\"@dimen/dp_16\"\n            android:id=\"@+id/tvEvent\"\n            android:layout_width=\"match_parent\"\n            android:layout_height=\"wrap_content\"\n            android:text=\"@{viewModel.data.eventName}\"\n            android:textColor=\"#ff333333\"\n            android:textSize=\"24sp\"\n            app:layout_constraintLeft_toLeftOf=\"@+id/tvTitle\"\n            app:layout_constraintTop_toBottomOf=\"@+id/tvTitle\" />\n\n\n        <LinearLayout\n            android:id=\"@+id/llContent\"\n            android:layout_width=\"match_parent\"\n            android:layout_height=\"@dimen/dp_217\"\n            android:layout_marginLeft=\"@dimen/dp_16\"\n            android:layout_marginTop=\"@dimen/dp_6\"\n            android:layout_marginRight=\"@dimen/dp_16\"\n            android:background=\"@mipmap/bg_wz\"\n            android:orientation=\"vertical\"\n            app:layout_constraintTop_toBottomOf=\"@+id/tvEvent\">\n\n            <TextView\n                android:layout_width=\"wrap_content\"\n                android:layout_height=\"wrap_content\"\n                android:layout_marginLeft=\"@dimen/dp_12\"\n                android:layout_marginTop=\"@dimen/dp_12\"\n                android:text=\"事件名称\"\n                android:textColor=\"#80FFFFFF\"\n                android:textSize=\"12sp\" />\n\n            <TextView\n                android:layout_width=\"wrap_content\"\n                android:layout_height=\"wrap_content\"\n                android:layout_marginLeft=\"@dimen/dp_12\"\n                android:text=\"@{viewModel.data.eventName}\"\n                android:textColor=\"#ffffffff\"\n                android:textSize=\"14sp\" />\n\n            <TextView\n                android:layout_width=\"wrap_content\"\n                android:layout_height=\"wrap_content\"\n                android:layout_marginLeft=\"@dimen/dp_12\"\n                android:text=\"事发地址\"\n                android:textColor=\"#80FFFFFF\"\n                android:textSize=\"12sp\" />\n\n            <TextView\n                android:layout_width=\"match_parent\"\n                android:layout_height=\"42dp\"\n                android:layout_marginLeft=\"@dimen/dp_12\"\n                android:layout_marginRight=\"@dimen/dp_12\"\n                android:ellipsize=\"end\"\n                android:maxLines=\"2\"\n                android:text=\"@{viewModel.data.detailAddress}\"\n                android:textColor=\"#ffffffff\"\n                android:textSize=\"14sp\" />\n\n\n            <LinearLayout\n\n                android:layout_width=\"match_parent\"\n                android:layout_height=\"wrap_content\"\n                android:orientation=\"horizontal\">\n\n                <TextView\n                    android:layout_width=\"48dp\"\n                    android:layout_height=\"18dp\"\n                    android:layout_marginLeft=\"@dimen/dp_12\"\n                    android:layout_weight=\"1\"\n                    android:text=\"事件状态\"\n                    android:textColor=\"#80FFFFFF\"\n                    android:textSize=\"12sp\" />\n\n                <TextView\n                    android:layout_width=\"48dp\"\n                    android:layout_height=\"18dp\"\n                    android:layout_weight=\"1\"\n                    android:text=\"事件类型\"\n                    android:textColor=\"#80FFFFFF\"\n                    android:textSize=\"12sp\" />\n\n                <TextView\n                    android:layout_width=\"48dp\"\n                    android:layout_height=\"18dp\"\n                    android:layout_weight=\"1\"\n                    android:text=\"关联仓库\"\n                    android:textColor=\"#80FFFFFF\"\n                    android:textSize=\"12sp\" />\n\n            </LinearLayout>\n\n            <LinearLayout\n\n                android:layout_width=\"match_parent\"\n                android:layout_height=\"wrap_content\"\n                android:orientation=\"horizontal\">\n\n                <TextView\n                    android:layout_width=\"48dp\"\n                    android:layout_height=\"18dp\"\n                    android:layout_marginLeft=\"@dimen/dp_12\"\n                    android:layout_weight=\"1\"\n                    android:text='@{viewModel.data.eventState+\"\"}'\n                    android:textColor=\"#FFF\"\n                    android:textSize=\"14sp\" />\n\n                <TextView\n                    android:layout_width=\"48dp\"\n                    android:layout_height=\"18dp\"\n                    android:layout_weight=\"1\"\n                    android:text='@{viewModel.data.eventTypeName+\"\"}'\n                    android:textColor=\"#FFF\"\n                    android:textSize=\"14sp\" />\n\n                <TextView\n                    android:layout_width=\"48dp\"\n                    android:layout_height=\"18dp\"\n                    android:layout_weight=\"1\"\n                    android:text='@{viewModel.data.warehouseId+\"\"}'\n                    android:textColor=\"#FFF\"\n                    android:textSize=\"14sp\" />\n\n            </LinearLayout>\n\n            <TextView\n                android:layout_width=\"wrap_content\"\n                android:layout_height=\"wrap_content\"\n                android:layout_marginLeft=\"@dimen/dp_12\"\n                android:layout_marginTop=\"@dimen/dp_12\"\n                android:text=\"事件等级\"\n                android:textColor=\"#80FFFFFF\"\n                android:textSize=\"12sp\" />\n\n            <TextView\n                android:layout_width=\"wrap_content\"\n                android:layout_height=\"wrap_content\"\n                android:layout_marginLeft=\"@dimen/dp_12\"\n                android:text='@{viewModel.data.eventLevel+\"\"}'\n                android:textColor=\"#ffffffff\"\n                android:textSize=\"14sp\" />\n\n        </LinearLayout>\n\n\n        <androidx.recyclerview.widget.RecyclerView\n            android:layout_width=\"match_parent\"\n            android:layout_height=\"@dimen/dp_0\"\n            app:itemBinding=\"@{viewModel.itemBinding}\"\n            app:items=\"@{viewModel.observableList}\"\n            app:layoutManager=\"@{LayoutManagers.grid(3,false)}\"\n            app:layout_constraintBottom_toBottomOf=\"parent\"\n            app:layout_constraintTop_toBottomOf=\"@+id/llContent\" />\n\n    </androidx.constraintlayout.widget.ConstraintLayout>\n</layout>\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_materials_manager.xml b/app/src/main/res/layout/activity_materials_manager.xml
+--- a/app/src/main/res/layout/activity_materials_manager.xml	(revision 12c5f5a306376b62a57b5262690beaf670849515)
++++ b/app/src/main/res/layout/activity_materials_manager.xml	(date 1716975941747)
+@@ -16,32 +16,32 @@
+         android:layout_height="match_parent">
+ 
+         <TextView
+-            android:layout_marginRight="@dimen/dp_16"
+             android:id="@+id/tvTitle"
+-            app:layout_constraintRight_toRightOf="parent"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_marginLeft="@dimen/dp_16"
++            android:layout_marginRight="@dimen/dp_16"
+             android:paddingTop="@dimen/dp_28"
+             android:text="@{viewModel.data.reportUnit}"
+             android:textColor="#ff999999"
+             android:textSize="16sp"
+             app:layout_constraintLeft_toLeftOf="parent"
++            app:layout_constraintRight_toRightOf="parent"
+             app:layout_constraintTop_toTopOf="parent" />
+ 
+         <TextView
+-            android:drawablePadding="@dimen/dp_0_5"
+-            android:drawableRight="@mipmap/ic_right_black"
+-            app:layout_constraintRight_toRightOf="parent"
+-            android:layout_marginRight="@dimen/dp_16"
+-            android:layout_marginLeft="@dimen/dp_16"
+             android:id="@+id/tvEvent"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
++            android:layout_marginLeft="@dimen/dp_16"
++            android:layout_marginRight="@dimen/dp_16"
++            android:drawableRight="@mipmap/ic_right_black"
++            android:drawablePadding="@dimen/dp_0_5"
+             android:text="@{viewModel.data.eventName}"
+             android:textColor="#ff333333"
+             android:textSize="24sp"
+             app:layout_constraintLeft_toLeftOf="@+id/tvTitle"
++            app:layout_constraintRight_toRightOf="parent"
+             app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+ 
+ 
+@@ -127,9 +127,10 @@
+             </LinearLayout>
+ 
+             <LinearLayout
+-
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
++                android:layout_marginLeft="@dimen/dp_12"
++                android:layout_marginRight="@dimen/dp_12"
+                 android:orientation="horizontal">
+ 
+                 <TextView
+Index: app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/vm/ApplyMaterialsViewModel.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.lib.emergency.rescue.ui.work.ui.activity.materials_manager.vm;\n\nimport android.app.Application;\nimport android.os.Bundle;\n\nimport androidx.annotation.NonNull;\nimport androidx.databinding.ObservableArrayList;\nimport androidx.databinding.ObservableField;\nimport androidx.databinding.ObservableList;\n\nimport com.hwq.mvvmlibrary.base.BaseViewModel;\nimport com.hwq.mvvmlibrary.binding.adapter.ItemBinding;\nimport com.hwq.mvvmlibrary.binding.command.BindingAction;\nimport com.hwq.mvvmlibrary.binding.command.BindingCommand;\nimport com.hwq.mvvmlibrary.http.BaseResponse;\nimport com.hwq.mvvmlibrary.http.ResponseThrowable;\nimport com.hwq.mvvmlibrary.utils.KLog;\nimport com.hwq.mvvmlibrary.utils.RxUtils;\nimport com.hwq.mvvmlibrary.utils.ToastUtils;\nimport com.lib.emergency.rescue.BR;\nimport com.lib.emergency.rescue.R;\nimport com.lib.emergency.rescue.data.Repository;\nimport com.lib.emergency.rescue.data.http.BaseResult;\nimport com.lib.emergency.rescue.data.http.result.CatalogQueryResult;\nimport com.lib.emergency.rescue.data.http.result.QueryApplyMaterialDrugResult;\nimport com.lib.emergency.rescue.data.http.result.QueryMaterialApplyMaterialDrugResult;\nimport com.lib.emergency.rescue.ui.work.ui.activity.change_event.ChangeEventActivity;\nimport com.lib.emergency.rescue.ui.work.ui.activity.materials_manager.ApplyMaterialsMostActivity;\nimport com.lib.emergency.rescue.ui.work.ui.activity.statistics_history.StatisticsHistoryActivity;\n\nimport java.util.ArrayList;\nimport java.util.HashMap;\nimport java.util.List;\nimport java.util.Map;\nimport java.util.function.Consumer;\n\npublic class ApplyMaterialsViewModel extends BaseViewModel<Repository> {\n    public ApplyMaterialsViewModel(@NonNull Application application, Repository model) {\n        super(application, model);\n    }\n\n    public ObservableField<String> leftId = new ObservableField<>(\"0\");\n    private List<QueryMaterialApplyMaterialDrugResult> checkList = new ArrayList<>();\n\n    public void addData(List<QueryMaterialApplyMaterialDrugResult> checkList) {\n        this.checkList.addAll(checkList);\n        checkList.forEach(new Consumer<QueryMaterialApplyMaterialDrugResult>() {\n            @Override\n            public void accept(QueryMaterialApplyMaterialDrugResult queryMaterialApplyMaterialDrugResult) {\n                observableList.add(new ApplyMaterialsItemViewModel(ApplyMaterialsViewModel.this, queryMaterialApplyMaterialDrugResult));\n            }\n        });\n    }\n\n    @Override\n    public void onCreate() {\n        titleViewModel.rightTextOnClickCommand = new BindingCommand(new BindingAction() {\n            @Override\n            public void call() {\n                Bundle bundle = new Bundle();\n                bundle.putInt(ParameterField.REQUEST_CODE, StatisticsHistoryActivity.REQUEST_CHANGE_EVENT);\n                startActivityForResult(ApplyMaterialsMostActivity.class, bundle);\n            }\n        });\n    }\n\n    //给RecyclerView添加items\n    public ObservableList<ApplyMaterialsItemViewModel> observableList = new ObservableArrayList<>();\n    //给RecyclerView添加ItemBinding\n    public ItemBinding<ApplyMaterialsItemViewModel> itemBinding = ItemBinding.of(BR.item, R.layout.fragment_apply_materials_item);\n\n\n    public ObservableField<String> checkSpecification = new ObservableField<>(\"0\");\n\n    public ObservableField<String> checkCount = new ObservableField<>(\"0\");\n\n    int specificationCount = 0;\n    int count = 0;\n\n    public void checking() {\n        //重置数据\n        specificationCount = 0;\n        count = 0;\n        observableList.forEach(materialAddItemViewModel -> {\n            materialAddItemViewModel.data.get().applyNum = materialAddItemViewModel.count.get();\n            if (materialAddItemViewModel.count.get() > 0) {\n                specificationCount++;\n                count = count + materialAddItemViewModel.count.get();\n            }\n        });\n        checkSpecification.set(specificationCount + \"\");\n        checkCount.set(count + \"\");\n    }\n\n    public void save() {\n        Map<String, Object> body = new HashMap<>();\n        body.put(\"applyTime\", System.currentTimeMillis());\n        body.put(\"warehouseId\", model.warehouseId());\n        body.put(\"applyList\", checkList);\n        body.put(\"type\", leftId.get());\n        model.materialSaveApply(body).compose(RxUtils.schedulersTransformer()) //线程调度\n                .compose(RxUtils.exceptionTransformer()).doOnSubscribe(this).subscribe(new BaseResult<BaseResponse>() {\n                    @Override\n                    public void onError(ResponseThrowable e) {\n                        KLog.e(e.getMessage());\n                    }\n\n                    @Override\n                    public void onSuccess(BaseResponse result) {\n                        finish();\n                    }\n\n                    @Override\n                    public void onComplete() {\n                        dismissDialog();\n                    }\n                });\n    }\n\n    public BindingCommand saveClick = new BindingCommand(new BindingAction() {\n        @Override\n        public void call() {\n            if (checkList.size()==0){\n                ToastUtils.showLong(\"请添加物资\");\n                return;\n            }\n            save();\n        }\n    });\n\n    public BindingCommand leftClick = new BindingCommand(new BindingAction() {\n        @Override\n        public void call() {\n            if (checkList.size()==0){\n                ToastUtils.showLong(\"请添加物资\");\n                return;\n            }\n            save();\n        }\n    });\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/vm/ApplyMaterialsViewModel.java b/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/vm/ApplyMaterialsViewModel.java
+--- a/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/vm/ApplyMaterialsViewModel.java	(revision 12c5f5a306376b62a57b5262690beaf670849515)
++++ b/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/vm/ApplyMaterialsViewModel.java	(date 1716987535280)
+@@ -34,7 +34,17 @@
+ import java.util.Map;
+ import java.util.function.Consumer;
+ 
++import io.reactivex.Observable;
++
+ public class ApplyMaterialsViewModel extends BaseViewModel<Repository> {
++    public boolean isOut = false;
++
++    public String id;
++
++    public String name;
++    public String tel;
++    public String receiveName;
++
+     public ApplyMaterialsViewModel(@NonNull Application application, Repository model) {
+         super(application, model);
+     }
+@@ -59,6 +69,7 @@
+             public void call() {
+                 Bundle bundle = new Bundle();
+                 bundle.putInt(ParameterField.REQUEST_CODE, StatisticsHistoryActivity.REQUEST_CHANGE_EVENT);
++                bundle.putBoolean("isOut", isOut);
+                 startActivityForResult(ApplyMaterialsMostActivity.class, bundle);
+             }
+         });
+@@ -94,11 +105,24 @@
+ 
+     public void save() {
+         Map<String, Object> body = new HashMap<>();
+-        body.put("applyTime", System.currentTimeMillis());
+-        body.put("warehouseId", model.warehouseId());
+-        body.put("applyList", checkList);
+-        body.put("type", leftId.get());
+-        model.materialSaveApply(body).compose(RxUtils.schedulersTransformer()) //线程调度
++        if (isOut) {
++            body.put("applyTime", System.currentTimeMillis());
++            body.put("warehouseId", model.warehouseId());
++            body.put("outDetailList", checkList);
++            body.put("type", leftId.get());
++            body.put("receiveName", receiveName);
++            body.put("contactPersonPhone", tel);
++            body.put("contactPerson", name);
++        } else {
++            body.put("applyTime", System.currentTimeMillis());
++            body.put("warehouseId", model.warehouseId());
++            body.put("applyList", checkList);
++            body.put("type", leftId.get());
++        }
++
++        Observable<BaseResponse> result = isOut ? model.saveOut(body) : model.materialSaveApply(body);
++
++        result.compose(RxUtils.schedulersTransformer()) //线程调度
+                 .compose(RxUtils.exceptionTransformer()).doOnSubscribe(this).subscribe(new BaseResult<BaseResponse>() {
+                     @Override
+                     public void onError(ResponseThrowable e) {
+@@ -107,6 +131,7 @@
+ 
+                     @Override
+                     public void onSuccess(BaseResponse result) {
++                        ToastUtils.showLong("提交成功");
+                         finish();
+                     }
+ 
+@@ -117,10 +142,11 @@
+                 });
+     }
+ 
++
+     public BindingCommand saveClick = new BindingCommand(new BindingAction() {
+         @Override
+         public void call() {
+-            if (checkList.size()==0){
++            if (checkList.size() == 0) {
+                 ToastUtils.showLong("请添加物资");
+                 return;
+             }
+@@ -131,7 +157,7 @@
+     public BindingCommand leftClick = new BindingCommand(new BindingAction() {
+         @Override
+         public void call() {
+-            if (checkList.size()==0){
++            if (checkList.size() == 0) {
+                 ToastUtils.showLong("请添加物资");
+                 return;
+             }
+Index: app/src/main/java/com/lib/emergency/rescue/data/http/HttpDataSource.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.lib.emergency.rescue.data.http;\n\n\nimport com.hwq.mvvmlibrary.http.BaseResponse;\nimport com.lib.emergency.rescue.data.http.request.LoginRequest;\nimport com.lib.emergency.rescue.data.http.request.PatientRequest;\nimport com.lib.emergency.rescue.data.http.request.QueryMessageByEventIdAndTaskIdResult;\nimport com.lib.emergency.rescue.data.http.request.QueryVehicleRequest;\nimport com.lib.emergency.rescue.data.http.request.RaptainListRequest;\nimport com.lib.emergency.rescue.data.http.result.ApplyByIdResult;\nimport com.lib.emergency.rescue.data.http.result.ApplyListResult;\nimport com.lib.emergency.rescue.data.http.result.CaptainListResult;\nimport com.lib.emergency.rescue.data.http.result.CatalogQueryResult;\nimport com.lib.emergency.rescue.data.http.result.EmergencyByStatusResult;\nimport com.lib.emergency.rescue.data.http.result.EmergencyDetailResult;\nimport com.lib.emergency.rescue.data.http.result.EmergencyListResult;\nimport com.lib.emergency.rescue.data.http.result.EmergencyTypeResult;\nimport com.lib.emergency.rescue.data.http.result.GetByIdResult;\nimport com.lib.emergency.rescue.data.http.result.HospitalResult;\nimport com.lib.emergency.rescue.data.http.result.ImGroupResult;\nimport com.lib.emergency.rescue.data.http.result.LoginResult;\nimport com.lib.emergency.rescue.data.http.result.MenuResult;\nimport com.lib.emergency.rescue.data.http.result.NoticeResult;\nimport com.lib.emergency.rescue.data.http.result.OneselfSystemMessage;\nimport com.lib.emergency.rescue.data.http.result.PatientDescResult;\nimport com.lib.emergency.rescue.data.http.result.PatientListResult;\nimport com.lib.emergency.rescue.data.http.result.PhiConfigResult;\nimport com.lib.emergency.rescue.data.http.result.QueryApplyListResult;\nimport com.lib.emergency.rescue.data.http.result.QueryApplyMaterialDrugResult;\nimport com.lib.emergency.rescue.data.http.result.QueryEmergencyListResult;\nimport com.lib.emergency.rescue.data.http.result.QueryListResult;\nimport com.lib.emergency.rescue.data.http.result.QueryMaterialApplyMaterialDrugResult;\nimport com.lib.emergency.rescue.data.http.result.QueryOutListResult;\nimport com.lib.emergency.rescue.data.http.result.QueryPersonListResult;\nimport com.lib.emergency.rescue.data.http.result.QueryVehicleResult;\nimport com.lib.emergency.rescue.data.http.result.ShelterResult;\nimport com.lib.emergency.rescue.data.http.result.SysUserSexResult;\nimport com.lib.emergency.rescue.data.http.result.TTSResult;\nimport com.lib.emergency.rescue.data.http.result.TimeShaftResult;\nimport com.lib.emergency.rescue.data.http.result.UserInfoResult;\nimport com.lib.emergency.rescue.data.http.result.WebSocketUrlResult;\nimport com.lib.emergency.rescue.data.http.result.WsOrPsuResult;\n\nimport java.util.List;\nimport java.util.Map;\nimport java.util.Objects;\n\nimport io.reactivex.Observable;\nimport retrofit2.http.Body;\nimport retrofit2.http.Field;\nimport retrofit2.http.GET;\nimport retrofit2.http.POST;\nimport retrofit2.http.Path;\nimport retrofit2.http.Query;\n\n/**\n * A simple {@link HttpDataSource} subclass.\n * Created by WenqiangHuang\n * Creation time 2020/7/29\n * Email vieqqw@163.com\n */\npublic interface HttpDataSource {\n    @POST(\"/prod-api/login/\")\n    Observable<BaseResponse<LoginResult>> login(@Body LoginRequest login);\n\n\n    @GET(\"/prod-api/manage/api/menu/v1/getMenu\")\n    Observable<BaseResponse<List<MenuResult>>> getMenu(@Query(\"userId\") String userId, @Query(\"systemId\") String systemId);\n\n    @GET(\"/prod-api/rescue-center-inj/tm/getUserInfo\")\n    Observable<BaseResponse<UserInfoResult>> getUserInfo(@Query(\"userId\") String userId);\n\n    @GET(\"/prod-api/wfyl-im/notice/v1/list/{page}/{pageSize}\")\n    Observable<BaseResponse<NoticeResult>> getNotice(@Path(\"page\") int page, @Path(\"pageSize\") int pageSize);\n\n    @GET(\"/prod-api/rescue-center-inj/patient/getWsOrPs\")\n    Observable<BaseResponse<WsOrPsuResult>> getWsOrPsu(@Query(\"wristbandSn\") String wristbandSn);\n\n\n    @GET(\"/prod-api/manage/sysDictData/all/type/sys_user_sex\")\n    Observable<BaseResponse<List<SysUserSexResult>>> sys_user_sex();\n\n    @GET(\"/prod-api/manage/sysDictData/all/type/patient_type\")\n    Observable<BaseResponse<List<SysUserSexResult>>> patient_type();\n\n    @GET(\"/prod-api/manage/sysDictData/all/type/consciousness\")\n    Observable<BaseResponse<List<SysUserSexResult>>> consciousness();\n\n    @GET(\"/prod-api/manage/sysDictData/all/type/additionalinjury\")\n    Observable<BaseResponse<List<SysUserSexResult>>> additionalinjury();\n\n    @GET(\"/prod-api/manage/sysDictData/all/type/comp_amb_bype\")\n    Observable<BaseResponse<List<SysUserSexResult>>> comp_amb_bype();\n\n    @GET(\"/prod-api/manage/sysDictData/all/type/facility_check_state\")\n    Observable<BaseResponse<List<SysUserSexResult>>> facility_check_state();\n\n    @GET(\"/prod-api/rescue-center-inj/phi/config/list\")\n    Observable<BaseResponse<List<PhiConfigResult>>> list();\n\n    @POST(\"/prod-api/rescue-center-inj/comp/v1/queryVehicle\")\n    Observable<BaseResponse<List<QueryVehicleResult>>> queryVehicle(@Body QueryVehicleRequest request);\n\n    @GET(\"/prod-api/rescue-center-inj/org/app/shelter\")\n    Observable<BaseResponse<ShelterResult>> shelter(@Query(\"current\") String current, @Query(\"size\") String size, @Query(\"shelterName\") String shelterName);\n\n    @GET(\"/prod-api/rescue-center-inj/org/app/hospital\")\n    Observable<BaseResponse<HospitalResult>> hospital(@Query(\"current\") String current, @Query(\"size\") String size, @Query(\"institutionalName\") String institutionalName);\n\n    @POST(\"/prod-api/rescue-center-inj/patient\")\n    Observable<BaseResponse> patient(@Body PatientRequest request);\n\n\n    @GET(\"/prod-api/wfyl-im/systemMessage/v1/getOneselfSystemMessagePage\")\n    Observable<BaseResponse<OneselfSystemMessage>> getOneselfSystemMessagePage(@Query(\"page\") int page, @Query(\"pageSize\") int pageSize, @Query(\"total\") int total);\n\n    @GET(\"/prod-api/rescue-center-inj/emergency/getEmergencyByStatus\")\n    Observable<BaseResponse<EmergencyByStatusResult>> getEmergencyByStatus(@Query(\"teamId\") String teamId);\n\n    @GET(\"/prod-api/rescue-center-inj/patient/list\")\n    Observable<BaseResponse<List<PatientListResult>>> patientList(@Query(\"eventId\") int eventId, @Query(\"current\") int current, @Query(\"size\") int size, @Query(\"judgementInjury\") Integer judgementInjury);\n\n\n    @GET(\"/prod-api/rescue-center-inj/patient/{id}\")\n    Observable<BaseResponse<PatientDescResult>> patient(@Path(\"id\") int id);\n\n    @GET(\"/prod-api/rescue-center-inj/emergency/app/list\")\n    Observable<BaseResponse<EmergencyListResult>> emergencyList(@Query(\"eportTimeType\") int eportTimeType, @Query(\"teamId\") String teamId, @Query(\"size\") int size);\n\n    @GET(\"/prod-api/rescue-center-inj/emergency/user/app/queryPersonList\")\n    Observable<BaseResponse<List<QueryPersonListResult>>> queryPersonList(@Query(\"emergencyId\") String emergencyId);\n\n    @GET(\"/prod-api/rescue-center-inj/emergency/time/shaft/list\")\n    Observable<BaseResponse<List<TimeShaftResult>>> timeShaft(@Query(\"eventId\") String eventId);\n\n    @GET(\"/prod-api/rescue-center-inj/emergency/queryEmergencyDetail/{id}\")\n    Observable<BaseResponse<EmergencyDetailResult>> queryEmergencyDetail(@Path(\"id\") int id);\n\n    @POST(\"/prod-api/rescue-center-inj/task/captainList\")\n    Observable<BaseResponse<CaptainListResult>> captainList(@Body RaptainListRequest request);\n\n    @POST(\"/prod-api/rescue-center-inj/emergency/type/list\")\n    Observable<BaseResponse<List<EmergencyTypeResult>>> emergencyType(@Body Object o);\n\n    @GET(\"/prod-api/manage/sysDictData/all/type/sys_event_source\")\n    Observable<BaseResponse<List<SysUserSexResult>>> sys_event_source();\n\n    @GET(\"/prod-api/manage/sysDictData/all/type/sys_event_type\")\n    Observable<BaseResponse<List<SysUserSexResult>>> sys_event_type();\n\n    @GET(\"/prod-api/manage/sysDictData/all/type/multiple_tag\")\n    Observable<BaseResponse<List<SysUserSexResult>>> multiple_tag();\n\n    @GET(\"/prod-api/manage/sysDictData/all/type/sys_event_level\")\n    Observable<BaseResponse<List<SysUserSexResult>>> sys_event_level();\n\n    @POST(\"/prod-api/rescue-center-inj/material/apply/queryApplyList\")\n    Observable<BaseResponse<List<QueryApplyListResult>>> queryApplyList(@Body Map<String, Object> body);\n\n    @POST(\"/prod-api/rescue-center-inj/material/apply/queryApplyMaterialDrug\")\n    Observable<BaseResponse<List<QueryApplyMaterialDrugResult>>> queryApplyMaterialDrug(@Body Map<String, Object> body);\n\n    @POST(\"/prod-api/rescue-center-inj/material/apply/catalog/queryList\")\n    Observable<BaseResponse<List<CatalogQueryResult>>> catalogQuery(@Body Map<String, Object> body);\n\n    @POST(\"/prod-api/rescue-center-inj/material/apply/saveApply\")\n    Observable<BaseResponse> saveApply(@Body Map<String, Object> body);\n\n    @GET(\"/prod-api/rescue-center-inj/material/apply/getApplyById/{id}\")\n    Observable<BaseResponse<ApplyByIdResult>> getApplyById(@Path(\"id\") String id);\n\n    @POST(\"/prod-api/rescue-center-inj/apply/queryList\")\n    Observable<BaseResponse<List<QueryListResult>>> queryList(@Body Map<String, Object> id);\n\n    @POST(\"/prod-api/rescue-center-inj/apply\")\n    Observable<BaseResponse> apply(@Body Map<String, Object> id);\n\n    @POST(\"/prod-api/wfyl-im/webSocket/getWebSocketUrl\")\n    Observable<BaseResponse<WebSocketUrlResult>> getWebSocketUrl(@Body Object o);\n\n    @GET(\"/prod-api/wfyl-im/imGroup/v1/list\")\n    Observable<BaseResponse<ImGroupResult>> imGroup(@Query(\"size\") int size);\n\n\n    @GET(\"/prod-api/manage/sysDictData/all/type/ti_position\")\n    Observable<BaseResponse<List<SysUserSexResult>>> ti_position();\n\n    @GET(\"/prod-api/manage/sysDictData/all/type/ti_trauma_type\")\n    Observable<BaseResponse<List<SysUserSexResult>>> ti_trauma_type();\n\n    @GET(\"/prod-api/manage/sysDictData/all/type/ti_breath\")\n    Observable<BaseResponse<List<SysUserSexResult>>> ti_breath();\n\n    @GET(\"/prod-api/manage/sysDictData/all/type/ti_awareness\")\n    Observable<BaseResponse<List<SysUserSexResult>>> ti_awareness();\n\n    @GET(\"/prod-api/manage/sysDictData/all/type/gcs_verbal_response\")\n    Observable<BaseResponse<List<SysUserSexResult>>> gcs_verbal_response();\n\n    @GET(\"/prod-api/manage/sysDictData/all/type/gcs_body_movement\")\n    Observable<BaseResponse<List<SysUserSexResult>>> gcs_body_movement();\n\n    @GET(\"/prod-api/manage/sysDictData/all/type/ts_blood_capillary\")\n    Observable<BaseResponse<List<SysUserSexResult>>> ts_blood_capillary();\n\n    @GET(\"/prod-api/manage/sysDictData/all/type/ts_breathe_rate\")\n    Observable<BaseResponse<List<SysUserSexResult>>> ts_breathe_rate();\n\n    @GET(\"/prod-api/manage/sysDictData/all/type/ts_gcs_standard\")\n    Observable<BaseResponse<List<SysUserSexResult>>> ts_gcs_standard();\n\n    @GET(\"/prod-api/manage/sysDictData/all/type/gcs_eye_open\")\n    Observable<BaseResponse<List<SysUserSexResult>>> gcs_eye_open();\n\n    @GET(\"/prod-api/manage/sysDictData/all/type/{path}\")\n    Observable<BaseResponse<List<SysUserSexResult>>> dic(@Path(\"path\") String path);\n\n\n    @POST(\"/prod-api/rescue-center-inj/patient/getScore\")\n    Observable<BaseResponse<String>> getScore(@Body Map<String, Object> id);\n\n    @GET(\"/prod-api/rescue-center-inj/dip/queryMessageByEventIdAndTaskId\")\n    Observable<BaseResponse<QueryMessageByEventIdAndTaskIdResult>> queryMessageByEventIdAndTaskId(@Query(\"eventId\") String eventId, @Query(\"taskId\") String taskId);\n\n    @POST(\"/prod-api/rescue-center-comp/material/app/queryEmergencyList\")\n    Observable<BaseResponse<List<QueryEmergencyListResult>>> queryEmergencyList(@Body Map<String, Object> prams);\n\n    @GET(\"/prod-api/rescue-center-comp/material/app/getApplyById/{id}\")\n    Observable<BaseResponse<List<SysUserSexResult>>> ApplyById(@Path(\"id\") String id);\n\n    @POST(\"/prod-api/rescue-center-comp/material/app/queryApplyList\")\n    Observable<BaseResponse<List<ApplyListResult>>> applyList(@Body Map<String, Object> prams);\n\n    @POST(\"/prod-api/rescue-center-comp/material/app/queryApplyMaterialDrug\")\n    Observable<BaseResponse<List<QueryMaterialApplyMaterialDrugResult>>> queryMaterialApplyMaterialDrug(@Body Map<String, Object> prams);\n\n    @POST(\"/prod-api/rescue-center-comp/material/app/saveApply\")\n    Observable<BaseResponse> materialSaveApply(@Body Map<String, Object> prams);\n\n    @GET(\"/prod-api/rescue-center-comp/material/app/queryOutList\")\n    Observable<BaseResponse<List<QueryOutListResult>>> queryOutList(@Query(\"warehouseId\") String warehouseId);\n\n    @GET(\"/prod-api/rescue-center-comp/material/app/getById/{id}\")\n    Observable<BaseResponse<GetByIdResult>> getById(@Path(\"id\") String id);\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/lib/emergency/rescue/data/http/HttpDataSource.java b/app/src/main/java/com/lib/emergency/rescue/data/http/HttpDataSource.java
+--- a/app/src/main/java/com/lib/emergency/rescue/data/http/HttpDataSource.java	(revision 12c5f5a306376b62a57b5262690beaf670849515)
++++ b/app/src/main/java/com/lib/emergency/rescue/data/http/HttpDataSource.java	(date 1716989624743)
+@@ -28,6 +28,7 @@
+ import com.lib.emergency.rescue.data.http.result.QueryApplyListResult;
+ import com.lib.emergency.rescue.data.http.result.QueryApplyMaterialDrugResult;
+ import com.lib.emergency.rescue.data.http.result.QueryEmergencyListResult;
++import com.lib.emergency.rescue.data.http.result.QueryEmergencyTeamResult;
+ import com.lib.emergency.rescue.data.http.result.QueryListResult;
+ import com.lib.emergency.rescue.data.http.result.QueryMaterialApplyMaterialDrugResult;
+ import com.lib.emergency.rescue.data.http.result.QueryOutListResult;
+@@ -163,6 +164,9 @@
+     @POST("/prod-api/rescue-center-inj/material/apply/catalog/queryList")
+     Observable<BaseResponse<List<CatalogQueryResult>>> catalogQuery(@Body Map<String, Object> body);
+ 
++
++
++
+     @POST("/prod-api/rescue-center-inj/material/apply/saveApply")
+     Observable<BaseResponse> saveApply(@Body Map<String, Object> body);
+ 
+@@ -237,10 +241,19 @@
+     @POST("/prod-api/rescue-center-comp/material/app/saveApply")
+     Observable<BaseResponse> materialSaveApply(@Body Map<String, Object> prams);
+ 
++    @POST("/prod-api/rescue-center-comp//material/app/saveOut")
++    Observable<BaseResponse> saveOut(@Body Map<String, Object> prams);
++
+     @GET("/prod-api/rescue-center-comp/material/app/queryOutList")
+     Observable<BaseResponse<List<QueryOutListResult>>> queryOutList(@Query("warehouseId") String warehouseId);
+ 
+     @GET("/prod-api/rescue-center-comp/material/app/getById/{id}")
+     Observable<BaseResponse<GetByIdResult>> getById(@Path("id") String id);
+ 
++    @GET("/prod-api/rescue-center-comp/material/app/queryEmergencyTeam")
++    Observable<BaseResponse<List<QueryEmergencyTeamResult>>> queryEmergencyTeam(@Query("dipEventId") String dipEventId);
++
++    @GET("/prod-api/rescue-center-comp/material/app/queryOutMaterialDrug")
++    Observable<BaseResponse<List<CatalogQueryResult>>> queryOutMaterialDrug(@Query("type")String type,@Query("warehouseId")String warehouseId);
++
+ }
+Index: app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/ApplyMaterialsActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.lib.emergency.rescue.ui.work.ui.activity.materials_manager;\n\nimport android.content.Intent;\nimport android.os.Bundle;\nimport android.view.LayoutInflater;\nimport android.view.ViewGroup;\n\nimport androidx.annotation.Nullable;\n\nimport com.hwq.mvvmlibrary.base.BaseActivity;\nimport com.hwq.mvvmlibrary.base.BaseFragment;\nimport com.hwq.mvvmlibrary.utils.KLog;\nimport com.lib.emergency.rescue.App;\nimport com.lib.emergency.rescue.BR;\nimport com.lib.emergency.rescue.R;\nimport com.lib.emergency.rescue.data.Injection;\nimport com.lib.emergency.rescue.databinding.FragmentApplyMaterialsBinding;\nimport com.lib.emergency.rescue.ui.work.ui.activity.materials_manager.vm.ApplyMaterialsViewModel;\n\n\n/**\n * 选择物资\n */\npublic class ApplyMaterialsActivity extends BaseActivity<FragmentApplyMaterialsBinding, ApplyMaterialsViewModel> {\n\n\n    @Override\n    public int initContentView(Bundle savedInstanceState) {\n        return R.layout.fragment_apply_materials;\n    }\n\n    @Override\n    public int initVariableId() {\n        return BR.viewModel;\n    }\n\n    @Override\n    public ApplyMaterialsViewModel initViewModel() {\n        return new ApplyMaterialsViewModel(App.getInstance(), Injection.provideDemoRepository(this));\n    }\n\n    @Override\n    public void initData() {\n        viewModel.titleViewModel.titleText.set(\"选择物资\");\n        viewModel.titleViewModel.rightText.set(\"添加\");\n    }\n\n    @Override\n    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {\n        super.onActivityResult(requestCode, resultCode, data);\n\n        if (data != null) {\n            viewModel.leftId.set(data.getStringExtra(\"leftId\"));\n            viewModel.addData(data.getParcelableArrayListExtra(\"list\"));\n        }\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/ApplyMaterialsActivity.java b/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/ApplyMaterialsActivity.java
+--- a/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/ApplyMaterialsActivity.java	(revision 12c5f5a306376b62a57b5262690beaf670849515)
++++ b/app/src/main/java/com/lib/emergency/rescue/ui/work/ui/activity/materials_manager/ApplyMaterialsActivity.java	(date 1716975456704)
+@@ -9,12 +9,14 @@
+ 
+ import com.hwq.mvvmlibrary.base.BaseActivity;
+ import com.hwq.mvvmlibrary.base.BaseFragment;
++import com.hwq.mvvmlibrary.base.BaseViewModel;
+ import com.hwq.mvvmlibrary.utils.KLog;
+ import com.lib.emergency.rescue.App;
+ import com.lib.emergency.rescue.BR;
+ import com.lib.emergency.rescue.R;
+ import com.lib.emergency.rescue.data.Injection;
+ import com.lib.emergency.rescue.databinding.FragmentApplyMaterialsBinding;
++import com.lib.emergency.rescue.router.Router;
+ import com.lib.emergency.rescue.ui.work.ui.activity.materials_manager.vm.ApplyMaterialsViewModel;
+ 
+ 
+@@ -23,6 +25,11 @@
+  */
+ public class ApplyMaterialsActivity extends BaseActivity<FragmentApplyMaterialsBinding, ApplyMaterialsViewModel> {
+ 
++    //1 物资申请 2 领用出库
++    public static int type = -1;
++    public static int type_apple = 1;
++    public static int type_out = 2;
++
+ 
+     @Override
+     public int initContentView(Bundle savedInstanceState) {
+@@ -41,7 +48,22 @@
+ 
+     @Override
+     public void initData() {
+-        viewModel.titleViewModel.titleText.set("选择物资");
++        Bundle bundle = getIntent().getBundleExtra(Router.BUNDLE);
++        if (bundle != null) {
++            type = bundle.getInt("type");
++            viewModel.isOut = type == type_out;
++            if (type == type_out) {
++                String id = bundle.getString("id");
++                String name = bundle.getString("name");
++                String tel = bundle.getString("tel");
++                String receiveName = bundle.getString("receiveName");
++                viewModel.id = id;
++                viewModel.name = name;
++                viewModel.tel = tel;
++                viewModel.receiveName = receiveName;
++            }
++        }
++        viewModel.titleViewModel.titleText.set(type == type_apple ? "选择物资" : "领用出库");
+         viewModel.titleViewModel.rightText.set("添加");
+     }
+ 

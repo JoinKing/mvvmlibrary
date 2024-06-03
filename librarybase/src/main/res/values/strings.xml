@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_activity_error_occurred_explanation" translatable="false">An unexpected error occurred.\nWe apologize for the inconvenience.</string>
+    <string name="error_activity_restart_app" translatable="false">Restart</string>
+    <string name="error_activity_close_app" translatable="false">Close App</string>
+    <string name="error_activity_error_details" translatable="false">Error Log</string>
+    <string name="error_activity_error_details_title" translatable="false">Error Details</string>
+    <string name="error_activity_error_details_close" translatable="false">Close</string>
+    <string name="error_activity_error_details_copy" translatable="false">Copy Log</string>
+    <string name="error_activity_error_details_copied" translatable="false">Log Copied</string>
+    <string name="error_activity_error_details_clipboard_label" translatable="false">Error Information</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
+    <string name="scan_faile">Scan Failed</string>
+
+    <string name="x_recycler_data_empty">暂时没有数据</string>
+    <string name="x_recycler_more_not">没有更多数据啦</string>
+    <string name="x_recycler_click_load_more">点击加载更多</string>
+    <string name="x_recycler_load_error">加载出错啦，请稍后重试</string>
+    <string name="x_recycler_load_more_message">正在加载更多数据，请稍后</string>
+</resources>

@@ -1,0 +1,1066 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AndroidLayouts">
+    <shared>
+      <config />
+    </shared>
+    <layouts>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_announcement.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_announcement_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_apple.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_apple_1_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_apple_2_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_apple_3_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_casualty_list.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_chat.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_chat_item_text_left.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_event_summary.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_inventory_view.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_inventory_view_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_map.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_material_out_history_detail.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_material_request.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_material_request_desc.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_material_request_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_material_request_item_1.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_material_request_item_2.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_materials_manager.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_materials_manager_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_materials_review.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_materials_review_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_materials_review_item_1.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_outbound_management.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_outbound_management_desc.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_outbound_management_desc_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_outbound_management_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_outbound_management_item_1.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_outbound_management_item_2.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_patient_registration.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_patient_registration_add.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_patient_registration_add_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_patient_registration_add_photo_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_rating.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_rating_gcs.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_rating_phi.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_rating_ti.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_rating_ts.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_requisition_outbound.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_task_details.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_timeline.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_video.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/dialog_add_material_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/dialog_select_level.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragemnt_add_material.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragemnt_add_material_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_announcement_desc.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_announcement_desc_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_apply_desc.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_apply_desc_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_apply_materials.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_apply_materials_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_apply_materials_most.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_apply_materials_most_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_event_summary_desc_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_history.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_history_item_next_voice.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_im.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_im_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_inventory_view.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_inventory_view_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_muster_details.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_outbound_review_desc.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_outbound_review_desc_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_triage.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_triage_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_triage_title_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_triage_title_voice_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_work.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_work_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/hospital_menu_dialog.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_his_material.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_marker.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_order.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_receive_image.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_receive_text.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_receive_video.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_receive_voice.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_send_image.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_send_text.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_send_text_voice.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_send_video.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/layout_tab_right.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/menu_dialog.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/menu_item.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/wheel_view_dialog.xml">
+        <config>
+          <theme>@style/Theme.Sunshinepay</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/librarybase/src/main/res/layout/layout_toolbar.xml">
+        <config>
+          <theme>@android:style/Theme.Material.Light</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/librarybase/src/main/res/layout/layout_toolbar_save.xml">
+        <config>
+          <theme>@android:style/Theme.Material.Light</theme>
+        </config>
+      </layout>
+    </layouts>
+  </component>
+  <component name="AndroidLogFilters">
+    <option name="TOOL_WINDOW_CUSTOM_FILTER" value="exc" />
+    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="BRANCH:master" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </select>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="1998b7de-f4d5-441b-86a4-c4cb131750f0" name="Default Changelist" comment="first">
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/librarybase/maven.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pay.jks" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[UANVB21119001355]" />
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$/librarybase">
+          <activation />
+        </task>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="valueResourceFile" />
+        <option value="Interface" />
+        <option value="layoutResourceFile" />
+        <option value="resourceFile" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="ProjectErrors" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="2W1sc0ktlA1qrZSyOiVCb0sqyQ4" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;PROJECT_TRUSTED_KEY&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/huangwenqiang/Desktop/mvvm/librarybase&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/libs" />
+      <recent name="$PROJECT_DIR$/app/src/main/res/drawable" />
+      <recent name="$PROJECT_DIR$/app/src/main/java/com/lib/emergency/rescue/utils/videocompressor" />
+      <recent name="$PROJECT_DIR$/app/src/main/java/com/lib/emergency/rescue/utils" />
+      <recent name="$PROJECT_DIR$/app/src/main/res/layout" />
+    </key>
+    <key name="android.template.1827772592">
+      <recent name="com.lib.emergency.rescue.ui.work.ui.fragment.patientRegistration" />
+    </key>
+    <key name="android.template.1407290952">
+      <recent name="com.sun.shine.pay.ui.home.activity" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.lib.emergency.rescue.utils" />
+      <recent name="com.lib.emergency.rescue.data.socket.model" />
+      <recent name="com.lib.emergency.rescue.data.socket.event" />
+      <recent name="com.lib.emergency.rescue.view" />
+      <recent name="com.lib.emergency.rescue.service" />
+    </key>
+    <key name="android.template.-1694380389">
+      <recent name="com.lib.emergency.rescue.ui.work.ui.activity" />
+      <recent name="com.lib.emergency.rescue.ui.work.ui.statistics" />
+      <recent name="com.lib.emergency.rescue.ui.mine" />
+      <recent name="com.lib.emergency.rescue.ui.address" />
+      <recent name="com.lib.emergency.rescue.ui.im" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="AndroidJUnit" factoryName="Android JUnit">
+      <option name="TEST_OBJECT" value="class" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <method v="2">
+        <option name="Android.Gradle.BeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="librarybase:librarybase [uploadArchives]" type="GradleRunConfiguration" factoryName="Gradle" activateToolWindowBeforeRun="false" nameIsGenerated="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/librarybase" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="uploadArchives" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="1998b7de-f4d5-441b-86a4-c4cb131750f0" name="Default Changelist" comment="" />
+      <created>1695911495636</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1695911495636</updated>
+    </task>
+    <task id="LOCAL-00001" summary="add project">
+      <created>1695914161261</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1695914161261</updated>
+    </task>
+    <task id="LOCAL-00002" summary="fix .gitignore">
+      <created>1695914217298</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1695914217298</updated>
+    </task>
+    <task id="LOCAL-00003" summary="add LoginActivity RegisterActivity ForgetPasswordActivity">
+      <created>1695991995063</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1695991995063</updated>
+    </task>
+    <task id="LOCAL-00004" summary="add chick app install">
+      <created>1696058107390</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1696058107390</updated>
+    </task>
+    <task id="LOCAL-00005" summary="add Recharge one">
+      <created>1696234360503</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1696234360504</updated>
+    </task>
+    <task id="LOCAL-00006" summary="add Arial.ttf">
+      <created>1696569109787</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1696569109788</updated>
+    </task>
+    <task id="LOCAL-00007" summary="add Active">
+      <created>1696600173334</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1696600173334</updated>
+    </task>
+    <task id="LOCAL-00008" summary="add Active">
+      <created>1696600190203</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1696600190203</updated>
+    </task>
+    <task id="LOCAL-00009" summary="add Set withdrawal UPIs">
+      <created>1696693427799</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1696693427799</updated>
+    </task>
+    <task id="LOCAL-00010" summary="第一次提交">
+      <created>1715169535081</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1715169535081</updated>
+    </task>
+    <task id="LOCAL-00011" summary="第一次提交">
+      <created>1715169556212</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1715169556212</updated>
+    </task>
+    <task id="LOCAL-00012" summary="移除无用文件 进度100%">
+      <created>1715173683662</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1715173683662</updated>
+    </task>
+    <task id="LOCAL-00013" summary="新增路由">
+      <created>1715177801809</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1715177801809</updated>
+    </task>
+    <task id="LOCAL-00014" summary="新增功能带有保存toobar【layout_toolbar_save】">
+      <created>1715180286097</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1715180286097</updated>
+    </task>
+    <task id="LOCAL-00015" summary="患者录入--5%">
+      <created>1715184198741</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1715184198741</updated>
+    </task>
+    <task id="LOCAL-00016" summary="患者录入--10%">
+      <created>1715243139673</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1715243139673</updated>
+    </task>
+    <task id="LOCAL-00017" summary="删除无用提交">
+      <created>1715243435266</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1715243435266</updated>
+    </task>
+    <task id="LOCAL-00018" summary="集成二维码扫描">
+      <created>1715246432940</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1715246432940</updated>
+    </task>
+    <task id="LOCAL-00019" summary="上传签名">
+      <created>1715307009525</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1715307009525</updated>
+    </task>
+    <task id="LOCAL-00020" summary="历史页面">
+      <created>1715349902745</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1715349902745</updated>
+    </task>
+    <task id="LOCAL-00021" summary="历史页面-语音二级数据">
+      <created>1715388871937</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1715388871937</updated>
+    </task>
+    <task id="LOCAL-00022" summary="上传图片视频身份证识别api">
+      <created>1715420291190</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1715420291190</updated>
+    </task>
+    <task id="LOCAL-00023" summary="上传视频接口优化">
+      <created>1715428668184</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1715428668184</updated>
+    </task>
+    <task id="LOCAL-00024" summary="患者信息上传+录音">
+      <created>1715524366600</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1715524366600</updated>
+    </task>
+    <task id="LOCAL-00025" summary="单选弹窗">
+      <created>1715524435776</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1715524435776</updated>
+    </task>
+    <task id="LOCAL-00026" summary="通知公告 60%">
+      <created>1715591195600</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1715591195600</updated>
+    </task>
+    <task id="LOCAL-00027" summary="通知公告 60%">
+      <created>1715591210771</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1715591210771</updated>
+    </task>
+    <task id="LOCAL-00028" summary="伤员列表 50%">
+      <created>1715693405276</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1715693405276</updated>
+    </task>
+    <task id="LOCAL-00029" summary="伤员列表 70%">
+      <created>1715734296237</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1715734296237</updated>
+    </task>
+    <task id="LOCAL-00030" summary="患者处置80%">
+      <created>1715739554062</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1715739554062</updated>
+    </task>
+    <task id="LOCAL-00031" summary="患者列表 95%">
+      <created>1715761164090</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1715761164090</updated>
+    </task>
+    <task id="LOCAL-00032" summary="患者列表 95%">
+      <created>1715766258703</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1715766258703</updated>
+    </task>
+    <task id="LOCAL-00033" summary="日历控件-支持 周日历 月日历 单选 多选等">
+      <created>1715766634093</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1715766634093</updated>
+    </task>
+    <task id="LOCAL-00034" summary="事件管理20%">
+      <created>1715785531726</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1715785531726</updated>
+    </task>
+    <task id="LOCAL-00035" summary="事件列表60%">
+      <created>1715907407670</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1715907407670</updated>
+    </task>
+    <task id="LOCAL-00036" summary="事件列表65%">
+      <created>1715913038147</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1715913038147</updated>
+    </task>
+    <task id="LOCAL-00037" summary="事件列表85%">
+      <created>1715967263364</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1715967263364</updated>
+    </task>
+    <task id="LOCAL-00038" summary="患者录入80%">
+      <created>1716079229658</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1716079229658</updated>
+    </task>
+    <task id="LOCAL-00039" summary="优化路径">
+      <created>1716080593918</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1716080593918</updated>
+    </task>
+    <task id="LOCAL-00040" summary="优化路径">
+      <created>1716080766105</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1716080766105</updated>
+    </task>
+    <task id="LOCAL-00041" summary="物资申请ui">
+      <created>1716128529968</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1716128529968</updated>
+    </task>
+    <task id="LOCAL-00042" summary="物资申请 50%&#10;患者录入 90%">
+      <created>1716256671278</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1716256671278</updated>
+    </task>
+    <task id="LOCAL-00043" summary="物资申请 100%">
+      <created>1716345450933</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1716345450933</updated>
+    </task>
+    <task id="LOCAL-00044" summary="人员申请 100%">
+      <created>1716387973560</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1716387973560</updated>
+    </task>
+    <task id="LOCAL-00045" summary="聊天ui">
+      <created>1716391521858</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1716391521858</updated>
+    </task>
+    <task id="LOCAL-00046" summary="聊天ui">
+      <created>1716472846214</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1716472846214</updated>
+    </task>
+    <task id="LOCAL-00083" summary="需求变更，移除弹窗确认">
+      <option name="closed" value="true" />
+      <created>1717396933835</created>
+      <option name="number" value="00083" />
+      <option name="presentableId" value="LOCAL-00083" />
+      <option name="project" value="LOCAL" />
+      <updated>1717396933835</updated>
+    </task>
+    <task id="LOCAL-00084" summary="/material/apply/queryApplyMaterialDrug 移除type">
+      <option name="closed" value="true" />
+      <created>1717400033495</created>
+      <option name="number" value="00084" />
+      <option name="presentableId" value="LOCAL-00084" />
+      <option name="project" value="LOCAL" />
+      <updated>1717400033495</updated>
+    </task>
+    <task id="LOCAL-00085" summary="first">
+      <option name="closed" value="true" />
+      <created>1717401233267</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
+      <option name="project" value="LOCAL" />
+      <updated>1717401233267</updated>
+    </task>
+    <option name="localTasksCounter" value="86" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="origin/master" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="origin/main" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="asr" />
+    <MESSAGE value="消息-会话消息，未读，历史" />
+    <MESSAGE value="优化事件列表队员数据" />
+    <MESSAGE value="现场物资首页部分ui" />
+    <MESSAGE value="音量最大化" />
+    <MESSAGE value="公告详情" />
+    <MESSAGE value="重连关联登录状态" />
+    <MESSAGE value="只是ts评分，舒张压" />
+    <MESSAGE value="消息首页" />
+    <MESSAGE value="物资首页" />
+    <MESSAGE value="出库管理50%" />
+    <MESSAGE value="领用出库99%" />
+    <MESSAGE value="库存查询20%" />
+    <MESSAGE value="库存查询100%" />
+    <MESSAGE value="库存审核" />
+    <MESSAGE value="出库管理" />
+    <MESSAGE value="物资申请" />
+    <MESSAGE value="优化" />
+    <MESSAGE value="优化患者录入" />
+    <MESSAGE value="IM列表跳转" />
+    <MESSAGE value="IM" />
+    <MESSAGE value="患者历史语音播报" />
+    <MESSAGE value="需求变更，移除弹窗确认" />
+    <MESSAGE value="/material/apply/queryApplyMaterialDrug 移除type" />
+    <MESSAGE value="first" />
+    <option name="LAST_COMMIT_MESSAGE" value="first" />
+  </component>
+</project>

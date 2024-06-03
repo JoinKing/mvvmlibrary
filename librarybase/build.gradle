@@ -1,0 +1,96 @@
+apply plugin: 'com.android.library'
+//apply from: "maven.gradle"
+android {
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
+    defaultConfig {
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        versionCode rootProject.ext.android.versionCode
+        versionName rootProject.ext.android.versionName
+        testInstrumentationRunner rootProject.ext.android.testInstrumentationRunner
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [AROUTER_MODULE_NAME: project.getName()]
+            }
+        }
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    dataBinding {
+        enabled = true
+    }
+
+}
+
+
+dependencies {
+    api fileTree(include: ['*.jar'], dir: 'libs')
+    api rootProject.ext.dependencies["constraint-layout"]
+
+    api "androidx.recyclerview:recyclerview:1.0.0"
+    //rxjava
+    api rootProject.ext.dependencies.rxjava
+    api rootProject.ext.dependencies.rxandroid
+    //rx管理View的生命周期
+    api rootProject.ext.dependencies.rxlifecycle
+    api rootProject.ext.dependencies["rxlifecycle-components"]
+    //rxbinding
+    api rootProject.ext.dependencies.rxbinding
+    //network
+    api rootProject.ext.dependencies.okhttp
+    api rootProject.ext.dependencies.retrofit
+    api rootProject.ext.dependencies["converter-gson"]
+    api rootProject.ext.dependencies["adapter-rxjava"]
+    //json解析
+    api rootProject.ext.dependencies.gson
+    //沉浸式
+    api rootProject.ext.dependencies.barlibrary
+    //glide图片加载库
+    api rootProject.ext.dependencies.glide
+
+    annotationProcessor rootProject.ext.dependencies["glide-compiler"]
+    //Google LiveData和ViewModel组件
+    api rootProject.ext.dependencies["lifecycle-extensions"]
+    //ARouter
+    implementation rootProject.ext.dependencies["arouter-api"]
+    annotationProcessor rootProject.ext.dependencies["arouter-compiler"]
+    //加密相关
+    api rootProject.ext.dependencies["bcprov-jdk15on"]
+    api rootProject.ext.dependencies["bcpkix-jdk15on"]
+    //JSON
+    api rootProject.ext.dependencies.fastjson
+    //material-dialogs
+    api(rootProject.ext.dependencies["material-dialogs-core"]) {
+        exclude group: 'com.android.support'
+    }
+    api(rootProject.ext.dependencies["material-dialogs-commons"]) {
+        exclude group: 'com.android.support'
+    }
+    implementation files('libs/tbs_sdk.jar')
+
+    //分包组件
+    api rootProject.ext.dependencies.multidex
+    //tab
+    api rootProject.ext.dependencies.tab
+    //banner
+    api rootProject.ext.dependencies.banner
+
+    api 'com.github.yuzhiqiang1993:zxing:2.2.5'
+    api 'org.aspectj:aspectjrt:1.9.6'
+
+    api 'com.github.wildma:PictureSelector:2.1.0'
+    // 动画解析库：https://github.com/airbnb/lottie-android
+    // 动画资源：https://lottiefiles.com、https://icons8.com/animated-icons
+    implementation 'com.airbnb.android:lottie:4.1.0'
+    //socket
+    api 'org.java-websocket:Java-WebSocket:1.5.1'
+
+}

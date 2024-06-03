@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="color_f1f1f1">#f1f1f1</color>
+    <color name="color_f3f3f3">#f3f3f3</color>
+    <color name="color_f6f6f6">#f6f6f6</color>
+    <color name="color_d9d9d9">#d9d9d9</color>
+    <color name="color_00B372">#00B372</color>
+    <color name="color_00B372_10">#1A00B372</color>
+    <color name="color_333333">#333333</color>
+    <color name="color_666666">#666666</color>
+    <color name="color_cccccc">#cccccc</color>
+    <color name="color_b2b2b2">#B2B2B2</color>
+    <color name="color_ff9928">#FF9928</color>
+    <color name="color_ff4f28">#FF4F28</color>
+    <color name="color_678cff">#678CFF</color>
+    <color name="color_0fc56b">#0FC56B</color>
+    <color name="color_white_60">#99FFFFFF</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="gray">#808080</color>
+    <color name="yellow">#FFFF00</color>
+    <color name="green">#008000</color>
+    <color name="blue">#0000FF</color>
+    <color name="orange">#FFA500</color>
+
+    <color name="transparent">#00000000</color>
+
+    <color name="textColor">#202020</color>
+    <color name="textColorHint">#A0A0A0</color>
+    <color name="textColorVice">#6C6C6C</color>
+    <color name="viewLineColor">#F0F0F0</color>
+    <color name="colorBar">#148996</color>
+
+    <color name="Orange">#e75946</color>
+    <color name="Yellow">#f4d227</color>
+    <color name="Blue">#4674e7</color>
+    <color name="Green">#0ba62c</color>
+    <!--自定义顶部弹窗的颜色-->
+    <color name="default_bg_color">#BDBDBD</color>
+    <color name="default_title_color">#ffffff</color>
+    <color name="default_message_color">#ffffff</color>
+    <color name="default_action_color">#26a69a</color>
+
+    <array name="in_colors_light">
+        <item>#4B03A9F4</item>
+        <item>#3303A9F4</item>
+        <item>#1903A9F4</item>
+    </array>
+</resources>

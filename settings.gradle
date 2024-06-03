@@ -1,0 +1,2 @@
+include ':librarybase'
+rootProject.name = "mvvm"
