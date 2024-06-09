@@ -22,7 +22,7 @@ import com.hwq.mvvmlibrary.binding.command.BindingCommand;
 public class TitleViewModel extends AndroidViewModel {
     public ObservableField<String> titleText = new ObservableField<>("");
     public ObservableField<String> rightText = new ObservableField<>("");
-    public ObservableField<String> leftText = new ObservableField<>("保存");
+    public ObservableField<String> leftText = new ObservableField<>("");
     public ObservableInt rightTextVisibility = new ObservableInt(View.GONE);
     public ObservableInt lineVisibility = new ObservableInt(View.VISIBLE);
 
