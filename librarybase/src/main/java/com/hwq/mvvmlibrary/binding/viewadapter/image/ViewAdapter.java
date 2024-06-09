@@ -25,18 +25,14 @@ import com.hwq.mvvmlibrary.widget.GlideRoundTransform;
 public final class ViewAdapter {
     @BindingAdapter(value = {"url", "uri", "placeholderRes"}, requireAll = false)
     public static void setImageUri(ImageView imageView, String url, Uri uri, int placeholderRes) {
+        //使用Glide框架加载图片
+        RequestOptions options = new RequestOptions().centerCrop().placeholder(placeholderRes) //预加载图片
+                .error(placeholderRes) //加载失败图片
+                .priority(Priority.HIGH) //优先级
+                .diskCacheStrategy(DiskCacheStrategy.ALL); //缓存
         if (!TextUtils.isEmpty(url)) {
-            //使用Glide框架加载图片
-            RequestOptions options = new RequestOptions().centerCrop().placeholder(placeholderRes) //预加载图片
-                    .error(placeholderRes) //加载失败图片
-                    .priority(Priority.HIGH) //优先级
-                    .diskCacheStrategy(DiskCacheStrategy.ALL); //缓存
             Glide.with(imageView.getContext()).load(url).apply(options).into(imageView);
         } else if (null != uri) {
-            RequestOptions options = new RequestOptions().centerCrop().placeholder(placeholderRes) //预加载图片
-                    .error(placeholderRes) //加载失败图片
-                    .priority(Priority.HIGH) //优先级
-                    .diskCacheStrategy(DiskCacheStrategy.ALL); //缓存
             Glide.with(imageView.getContext()).load(uri).apply(options).into(imageView);
         }
     }
@@ -48,19 +44,16 @@ public final class ViewAdapter {
 
     @BindingAdapter(value = {"urlRadius", "placeholderRes"}, requireAll = false)
     public static void urlRadius(ImageView imageView, String url, int placeholderRes) {
-        if (!TextUtils.isEmpty(url)) {
-            RequestOptions options = new RequestOptions().centerCrop().placeholder(placeholderRes) //预加载图片
-                    .error(placeholderRes) //加载失败图片
-                    .priority(Priority.HIGH) //优先级
-                    .diskCacheStrategy(DiskCacheStrategy.ALL) //缓存
-                    .transform(new CircleTransformation());
-            Glide.with(imageView.getContext()).load(url).apply(options).into(imageView);
-        }
+        RequestOptions options = new RequestOptions().centerCrop().placeholder(placeholderRes) //预加载图片
+                .error(placeholderRes) //加载失败图片
+                .priority(Priority.HIGH) //优先级
+                .diskCacheStrategy(DiskCacheStrategy.ALL) //缓存
+                .transform(new CircleTransformation());
+        Glide.with(imageView.getContext()).load(url).apply(options).into(imageView);
     }
 
     @BindingAdapter(value = {"urlWithRadius", "placeholderRes", "glideRadius"}, requireAll = false)
     public static void urlRadius(ImageView imageView, String url, int placeholderRes, int glideRadius) {
-        url = url == null ? "" : url;
         RequestOptions options = new RequestOptions().centerCrop().placeholder(placeholderRes) //预加载图片
                 .error(placeholderRes) //加载失败图片
                 .priority(Priority.HIGH) //优先级

@@ -6,8 +6,8 @@ ext {
             applicationId            : "com.sun.shine.pay",
             minSdkVersion            : 24,
             targetSdkVersion         : 33,
-            versionCode              : 33,
-            versionName              : "1.0.33",
+            versionCode              : 34,
+            versionName              : "1.0.34",
             testInstrumentationRunner: 'androidx.test.runner.AndroidJUnitRunner',
             consumerProguardFiles    : "consumer-rules.pro",
     ]
