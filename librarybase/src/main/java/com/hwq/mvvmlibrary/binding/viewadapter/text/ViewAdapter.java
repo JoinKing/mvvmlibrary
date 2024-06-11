@@ -16,14 +16,13 @@ import com.hwq.mvvmlibrary.binding.command.BindingCommand;
  */
 
 public class ViewAdapter {
-    /**
-     * @param //绑定监听
-     */
-    @SuppressWarnings("unchecked")
+
     @BindingAdapter(value = {"text"}, requireAll = false)
-    public static void setCheckedChanged(final TextView textView, Object text) {
+    public static void setText(final TextView textView, String text) {
         if (text != null) {
-            textView.setText(text + "");
+            textView.setText(text);
+        } else {
+            textView.setText("");
         }
     }
 
